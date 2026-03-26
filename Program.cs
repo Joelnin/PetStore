@@ -1,15 +1,36 @@
-using PetStore.Components;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
-
+//Namespaces
+using PetStore.Components;
+using PetStore.Data;
+using PetStore.Services;
+using PetStore.Models;
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+// ====================== Services ======================
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? "Data Source=petstore.db"; // Fallback for appsettings;
 
-// Add services de Autenticate and Cookies
+builder.Services.AddDbContext<PetStoreContext>(options =>
+    options.UseSqlite(connectionString));
+
+builder.Services.AddScoped<PetService>();
+// ====================== ASP.NET Core Identity ======================
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 6;
+    options.SignIn.RequireConfirmedAccount = false;
+})
+.AddEntityFrameworkStores<PetStoreContext>()
+.AddDefaultTokenProviders();
+
+// ====================== Authentication (Google/MS) ======================
+
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -27,25 +48,39 @@ builder.Services.AddAuthentication(options =>
         msOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"]!;
     });
 
-// Enable the state of authentication in Blazor
+// ====================== UI & Blazor ======================
+
 builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// ====================== Middleware Pipeline ======================
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
-app.UseAntiforgery();
+app.UseRouting();
+app.UseAntiforgery();           
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<PetStoreContext>();
+    db.Database.EnsureCreated();
+}
 
 app.Run();

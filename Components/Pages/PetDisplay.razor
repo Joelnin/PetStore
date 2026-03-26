@@ -1,7 +1,9 @@
 @page "/petdisplay/{category}"
 @using PetStore.Models
+@using PetStore.Services
+@inject PetService PetService
 
-<PageTitle>Pet Display</PageTitle>
+<PageTitle>Pets</PageTitle>
 
 <h1>@PageTitleText</h1>
 
@@ -14,12 +16,18 @@ else
   <div class="category-grid">
     @foreach (var pet in filteredPets)
     {
-      <div class="category-card">
-        <div class="category-icon">@pet.ImageUrl</div>
+      <NavLink class="category-card" href="@($"/pet/{pet.Id}")">
+        <div class="pet-image-container">
+          <img src="@pet.ImageUrl" alt="@pet.Name" />
+        </div>
+
         <h3>@pet.Name</h3>
+
         <p>@pet.Description</p>
-        <p>Age: @pet.Age</p>
-      </div>
+
+        <p><strong>Age:</strong> @pet.Age</p>
+
+      </NavLink>
     }
   </div>
 }
@@ -28,35 +36,15 @@ else
   [Parameter]
   public string? category { get; set; }
 
-  private List<Pet> allPets = new()
-    {
-        new Pet { Id = 1, Name = "Max", Category = "dogs", Description = "A playful and loyal dog.", ImageUrl = "🐶", Age = 3 },
-        new Pet { Id = 2, Name = "Bella", Category = "dogs", Description = "Loves long walks and treats.", ImageUrl = "🐶", Age
-= 2 },
-        new Pet { Id = 3, Name = "Luna", Category = "cats", Description = "A calm cat who loves naps.", ImageUrl = "🐱", Age = 4
-},
-        new Pet { Id = 4, Name = "Milo", Category = "cats", Description = "Curious and full of energy.", ImageUrl = "🐱", Age =
-1 },
-        new Pet { Id = 5, Name = "Draco", Category = "dragons", Description = "A tiny dragon with a big personality.", ImageUrl
-= "🐉", Age = 100 },
-        new Pet { Id = 6, Name = "Sparkle", Category = "unicorns", Description = "Gentle and magical.", ImageUrl = "🦄", Age = 7
-},
-        new Pet { Id = 7, Name = "Sunny", Category = "birds", Description = "Bright and cheerful singer.", ImageUrl = "🐦", Age
-= 2 },
-        new Pet { Id = 8, Name = "Daisy", Category = "elephants", Description = "A kind giant with a sweet nature.", ImageUrl =
-"🐘", Age = 12 }
-    };
-
   private List<Pet> filteredPets = new();
 
-  private string PageTitleText => string.IsNullOrWhiteSpace(category)
-      ? "Pets"
-      : char.ToUpper(category[0]) + category.Substring(1);
+  private string PageTitleText =>
+      string.IsNullOrWhiteSpace(category)
+          ? "Pets"
+          : char.ToUpper(category[0]) + category.Substring(1);
 
   protected override void OnParametersSet()
   {
-    filteredPets = allPets
-        .Where(p => p.Category.Equals(category, StringComparison.OrdinalIgnoreCase))
-        .ToList();
+    filteredPets = PetService.GetPetsByCategory(category);
   }
 }

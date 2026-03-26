@@ -1,0 +1,56 @@
+@page "/pet/{id:int}"
+@using PetStore.Models
+@using PetStore.Services
+@inject PetService PetService
+
+<PageTitle>Pet Details</PageTitle>
+
+@if (selectedPet is null)
+{
+  <p>Pet not found.</p>
+}
+else
+{
+  <section class="pet-details">
+    <img src="@selectedPet.ImageUrl" alt="@selectedPet.Name" class="pet-details-image" />
+
+    <h1>@selectedPet.Name</h1>
+
+    <p><strong>Category:</strong> @selectedPet.Category</p>
+    <p><strong>Age:</strong> @selectedPet.Age</p>
+    <p>@selectedPet.Description</p>
+
+    @if (!isSignedIn)
+    {
+      <div class="pet-help-box">
+        <p>Please sign in if you'd like to help @selectedPet.Name.</p>
+        <NavLink class="signin-button" href="/signin">Sign In</NavLink>
+      </div>
+    }
+    else
+    {
+      <div class="pet-help-box">
+        <h3>How would you like to help @selectedPet.Name?</h3>
+
+        <div class="help-buttons">
+          <button class="help-button">Adopt</button>
+          <button class="help-button">Foster</button>
+          <button class="help-button">Sponsor</button>
+        </div>
+      </div>
+    }
+  </section>
+}
+
+@code {
+  [Parameter]
+  public int id { get; set; }
+
+  private Pet? selectedPet;
+  bool isSignedIn = false;
+
+  protected override void OnParametersSet()
+  {
+    selectedPet = PetService.GetPetById(id);
+  }
+}
