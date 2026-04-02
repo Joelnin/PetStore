@@ -1,0 +1,125 @@
+@page "/account/register"
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
+@inject UserManager<ApplicationUser> UserManager
+@inject NavigationManager NavigationManager
+
+<PageTitle>Registro - PetStore</PageTitle>
+
+<div class="register-container">
+    <h2>Crear Cuenta</h2>
+
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger">@ErrorMessage</div>
+    }
+
+    <EditForm Model="Input" OnValidSubmit="HandleRegister" FormName="register">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label>Nombre</label>
+            <InputText @bind-Value="Input.FirstName" class="form-control" />
+            <ValidationMessage For="() => Input.FirstName" />
+        </div>
+
+        <div class="form-group">
+            <label>Apellido</label>
+            <InputText @bind-Value="Input.LastName" class="form-control" />
+            <ValidationMessage For="() => Input.LastName" />
+        </div>
+
+        <div class="form-group">
+            <label>Nombre de Usuario (Opcional)</label>
+            <InputText @bind-Value="Input.NickName" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Correo electrónico</label>
+            <InputText type="email" @bind-Value="Input.Email" class="form-control" />
+            <ValidationMessage For="() => Input.Email" />
+        </div>
+
+        <div class="form-group">
+            <label>Contraseña</label>
+            <InputText type="password" @bind-Value="Input.Password" class="form-control" />
+            <ValidationMessage For="() => Input.Password" />
+        </div>
+
+        <div class="form-group">
+            <label>Confirmar Contraseña</label>
+            <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" />
+            <ValidationMessage For="() => Input.ConfirmPassword" />
+        </div>
+
+        <button type="submit" class="btn btn-success w-100">Registrarse</button>
+    </EditForm>
+
+    <div class="text-center mt-3">
+        <a href="/account/login">¿Ya tienes cuenta? Inicia sesión</a>
+    </div>
+</div>
+
+@code {
+    private RegisterInput Input { get; set; } = new();
+
+    private string? ErrorMessage;
+
+    public class RegisterInput
+    {
+        [Required]
+        [MaxLength(50)]
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(50)]
+        public string LastName { get; set; } = string.Empty;
+
+        [MaxLength(20)]
+        public string? NickName { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        [MinLength(6)]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = string.Empty;
+
+        [Required]
+        [Compare(nameof(Password), ErrorMessage = "Las contraseñas no coinciden")]
+        [DataType(DataType.Password)]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+
+    private async Task HandleRegister()
+    {
+        ErrorMessage = null;
+
+        var user = new ApplicationUser
+        {
+            UserName = Input.Email,
+            Email = Input.Email,
+            FirstName = Input.FirstName,
+            LastName = Input.LastName,
+            NickName = Input.NickName,
+            EmailConfirmed = true   // En desarrollo lo marcamos como confirmado
+        };
+
+        var result = await UserManager.CreateAsync(user, Input.Password);
+
+        if (result.Succeeded)
+        {
+            // Asignar rol User por defecto
+            await UserManager.AddToRoleAsync(user, Roles.User);
+            NavigationManager.NavigateTo("/account/login");
+        }
+        else
+        {
+            ErrorMessage = string.Join("<br>", result.Errors.Select(e => e.Description));
+        }
+    }
+}

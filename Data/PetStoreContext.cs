@@ -4,7 +4,7 @@ using PetStore.Models;
 
 namespace PetStore.Data;
 
-public class PetStoreContext : IdentityDbContext<ApplicationUser>
+public class PetStoreContext : IdentityDbContext<User>
 {
   public PetStoreContext(DbContextOptions<PetStoreContext> options)
       : base(options)
