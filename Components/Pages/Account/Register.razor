@@ -114,7 +114,7 @@
         if (result.Succeeded)
         {
             // Asignar rol User por defecto
-            await UserManager.AddToRoleAsync(user, Roles.User);
+            await UserManager.AddToRoleAsync(user, Roles.Client);
             NavigationManager.NavigateTo("/account/login");
         }
         else
