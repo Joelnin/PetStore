@@ -8,13 +8,12 @@ using PetStore.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // ====================== Services ======================
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<PetStoreContext>(options =>
     options.UseSqlite(connectionString));
 
-
+// Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
@@ -27,10 +26,18 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<PetStoreContext>()
 .AddDefaultTokenProviders();
 
+// Blazor y servicios
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+builder.Services.AddAntiforgery(); // Necesario para el token
+
+// ✅ Servicios personalizados (solo una vez)
+builder.Services.AddScoped<PetService>();
+
+// Configuración de componentes interactivos (para .NET 8/9/10)
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddScoped<PetService>();
 builder.Services.AddCascadingAuthenticationState();
 
 var app = builder.Build();
@@ -47,17 +54,19 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
-app.UseAntiforgery();
+app.UseAntiforgery(); // Habilitar antiforgery
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
 
+// Mapeo de Blazor
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+
+// Migraciones automáticas (opcional)
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<PetStoreContext>();

@@ -1,0 +1,135 @@
+@page "/request"
+@using PetStore.Models
+@using PetStore.Services
+@using Microsoft.AspNetCore.Components.Forms
+@inject PetService PetService
+@inject NavigationManager NavigationManager
+@inject ILogger<RequestForm> Logger
+
+<h1 class="page-title">Solicitud de Adopción, Foster o Sponsor</h1>
+
+<div class="request-container">
+    <EditForm Model="requestModel" OnValidSubmit="HandleValidSubmit" FormName="requestForm">
+        <AntiforgeryToken />
+        <DataAnnotationsValidator />
+        <ValidationSummary class="validation-summary" />
+        
+        @if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            <div class="alert alert-danger">@errorMessage</div>
+        }
+
+        <div class="form-group">
+            <label class="form-label">Tipo de solicitud</label>
+            <select class="form-select" @bind="requestModel.RequestType">
+                <option value="">Selecciona un tipo</option>
+                @foreach (var requestType in requestTypes)
+                {
+                    <option value="@requestType">@requestType</option>
+                }
+            </select>
+            <ValidationMessage For="@(() => requestModel.RequestType)" />
+        </div>
+
+        <div class="request-summary">
+            <p class="summary-title">¿Qué necesitas?</p>
+            <p>@CurrentSummary</p>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label">Nombre</label>
+                <InputText class="form-control" @bind-Value="requestModel.FirstName" />
+                <ValidationMessage For="@(() => requestModel.FirstName)" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Apellido</label>
+                <InputText class="form-control" @bind-Value="requestModel.LastName" />
+                <ValidationMessage For="@(() => requestModel.LastName)" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Correo electrónico</label>
+                <InputText class="form-control" type="email" @bind-Value="requestModel.Email" />
+                <ValidationMessage For="@(() => requestModel.Email)" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Dirección</label>
+                <InputText class="form-control" @bind-Value="requestModel.Address" />
+                <ValidationMessage For="@(() => requestModel.Address)" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Fecha de nacimiento</label>
+                <InputDate class="form-control" @bind-Value="requestModel.DateOfBirth" />
+                <ValidationMessage For="@(() => requestModel.DateOfBirth)" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Mascota preferida</label>
+                <select class="form-select" @bind="requestModel.PreferredPetType">
+                    <option value="">Selecciona una categoría</option>
+                    @foreach (var category in categories)
+                    {
+                        <option value="@category.Name">@category.Name</option>
+                    }
+                </select>
+                <ValidationMessage For="@(() => requestModel.PreferredPetType)" />
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-submit">Enviar solicitud</button>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    private RequestFormModel requestModel = new();
+    private string errorMessage = string.Empty;
+    private readonly string[] requestTypes = new[] { "Adopción", "Foster", "Sponsor" };
+    private List<PetCategory> categories = new();
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            categories = PetService.GetAllCategories();
+            Logger.LogInformation("Categorías cargadas: {Count}", categories.Count);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error al cargar categorías: {ex.Message}";
+            Logger.LogError(ex, "Error cargando categorías");
+        }
+    }
+
+    private string CurrentSummary => requestModel.RequestType switch
+    {
+        "Adopción" => "Solicita la adopción de una mascota y ayúdanos a encontrarle un hogar permanente.",
+        "Foster" => "Registra tu hogar temporal para cuidar mascotas que necesitan apoyo mientras esperan su nuevo hogar.",
+        "Sponsor" => "Conviértete en padrino y apoya el cuidado de una mascota con tu contribución.",
+        _ => "Selecciona un tipo de solicitud para ver los detalles específicos.",
+    };
+
+    private async Task HandleValidSubmit()
+    {
+        errorMessage = string.Empty;
+        try
+        {
+            Logger.LogInformation("Enviando solicitud: {FirstName} {LastName}", requestModel.FirstName, requestModel.LastName);
+            
+            PetService.AddRequest(requestModel);
+            
+            Logger.LogInformation("Solicitud guardada exitosamente");
+            NavigationManager.NavigateTo("/thank-you");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error al enviar: {ex.Message}";
+            Logger.LogError(ex, "Error en HandleValidSubmit");
+        }
+    }
+}

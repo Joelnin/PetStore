@@ -88,6 +88,35 @@ public class PetService
     }
   }
 
+  public void AddRequest(RequestFormModel request)
+{
+    try
+    {
+        Console.WriteLine($"=== AddRequest llamado ===");
+        Console.WriteLine($"Datos: {request.FirstName} {request.LastName}, Email: {request.Email}");
+        
+        _context.Requests.Add(request);
+        
+        Console.WriteLine($"Antes de SaveChanges. State: {_context.Entry(request).State}");
+        
+        _context.SaveChanges();
+        
+        Console.WriteLine($"Después de SaveChanges. ID asignado: {request.Id}");
+        Console.WriteLine("=== AddRequest completado exitosamente ===");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error en AddRequest: {ex.Message}");
+        Console.WriteLine($"Stack trace: {ex.StackTrace}");
+        throw; // Re-lanzar para que el componente maneje el error
+    }
+}
+
+  public List<RequestFormModel> GetAllRequests()
+  {
+    return _context.Requests.ToList();
+  }
+
   public bool DeleteCategory(int id)
   {
     var category = _context.PetCategories.FirstOrDefault(c => c.Id == id);
