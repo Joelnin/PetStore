@@ -11,11 +11,11 @@
             <div class="top-row-right">
                 <AuthorizeView>
                     <Authorized>
-                        <span>Hola, @context.User.Identity?.Name</span>
-                        <a href="/account/logout" class="logout-link">Cerrar Sesión</a>
+                        <span>Hello, @context.User.Identity?.Name</span>
+                        <a href="/account/logout" class="logout-link">Logout</a>
                     </Authorized>
                     <NotAuthorized>
-                         <a href="/signin-google" class="signin-link">Iniciar Sesión con Google</a>
+                         <a href="/signin-google" class="signin-link">Login with Google</a>
                     </NotAuthorized>
                 </AuthorizeView>
             </div>
