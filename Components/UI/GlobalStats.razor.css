@@ -1,0 +1,41 @@
+/* --- IMPACT SECTION REFINEMENT --- */
+.section-description p {
+    color: #4b5563;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+    max-width: 95%;
+}
+
+/* --- STATS --- */
+
+.stats-grid {
+    display: flex;
+    gap: 40px;
+    margin-top: 1rem;
+}
+
+.stat-box {
+    flex: 0 1 auto;
+    text-align: left;
+}
+
+.stat-number {
+    display: block;
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--brand-orange);
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(27, 67, 50, 0.15); 
+    transition: all 0.3s ease;
+}
+
+.stat-text {
+    display: block;
+    color: var(--brand-pine-teal);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}

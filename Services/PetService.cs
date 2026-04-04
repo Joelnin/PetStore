@@ -1,5 +1,6 @@
 using PetStore.Data;
 using PetStore.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace PetStore.Services;
 
@@ -135,7 +136,7 @@ public class PetService
   }
 
 
-public List<Shelter> GetAllShelters()
+  public List<Shelter> GetAllShelters()
   {
     return _context.Shelters.ToList();
   }
@@ -157,4 +158,11 @@ public List<Shelter> GetAllShelters()
     return _context.Shelters.FirstOrDefault(s => s.Id == id);
   }
 
+  public async Task<(int pets, int shelters)> GetGlobalTotalsAsync()
+  {
+    var petsCount = await _context.Pets.CountAsync();
+    var sheltersCount = await _context.Shelters.CountAsync();
+
+    return (petsCount, sheltersCount);
+  }
 }

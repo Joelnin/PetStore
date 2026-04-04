@@ -10,19 +10,85 @@
     <ResourcePreloader />
     <link rel="stylesheet" href="@Assets["lib/bootstrap/dist/css/bootstrap.min.css"]" />
     <link rel="stylesheet" href="@Assets["app.css"]" />
-    <link rel="stylesheet" href="@Assets["PetStore.styles.css"]" />
+    <link rel="stylesheet" href="PetStore.styles.css" />
     <ImportMap />
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" type="image/png" href="/favicon.svg" />
     <HeadOutlet />
+    <script>
+        if (sessionStorage.getItem('pf_ready')) {
+            document.documentElement.classList.add('app-loaded');
+        }
+    </script>
+    <style>
+        .app-loaded .loading-overlay {
+            display: none !important;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff;
+            z-index: 10000;
+            transition: opacity 0.5s ease-out; 
+        }
+
+        .loading-logo {
+            max-height: 100px;
+            margin-bottom: 1rem;
+            animation: pulse-logo 1.8s ease-in-out infinite;
+        }
+
+        .loading-brand-text {
+            color: #1b4332; 
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        @@keyframes pulse-logo {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+    </style>
 </head>
 
 <body>
+    <div id="app-loader" class="loading-overlay">
+        <img src="images/logo-pawsitive-friends.svg" class="loading-logo" alt="Cargando Pawsitive Friends..." />
+        <div class="loading-brand-text">Pawsitive Friends</div>
+    </div>
     <CascadingAuthenticationState>
         <Routes />
     </CascadingAuthenticationState>
 
     <ReconnectModal />
-    <script src="@Assets["_framework/blazor.web.js"]"></script>
+    <script src="@Assets["_framework/blazor.web.js"]" autostart="false"></script>
+    <script>
+        window.hideAppLoader = () => {
+            const loader = document.getElementById('app-loader');
+            if (loader) {
+                loader.style.opacity = '0';
+                loader.style.pointerEvents = 'none'; 
+                setTimeout(() => {
+                    loader.remove();
+                    sessionStorage.setItem('pf_ready', 'true');
+                }, 600); 
+            }
+        };
+
+        Blazor.start().then(window.hideAppLoader);
+
+        Blazor.addEventListener('enhancedload', window.hideAppLoader);
+    </script>
 </body>
 
 </html>

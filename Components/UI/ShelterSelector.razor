@@ -1,0 +1,73 @@
+@inject NavigationManager Nav
+@using PetStore.Models
+@using PetStore.Services
+@rendermode InteractiveServer
+@inject PetService PetService
+
+<div class="shelter-selector-container">
+    <p class="selector-label">FIND YOUR NEAREST SHELTER</p>
+    
+    <select @ref="shelterSelectRef" @bind="SelectedShelterId" @bind:after="NotifyChange"
+            class="form-select custom-select">
+        <option value="">-- Choose a location --</option>
+        @foreach (var shelter in Shelters)
+        {
+            <option value="@shelter.Id">@shelter.Name</option>
+        }
+    </select>
+
+    @* Acciones rápidas debajo del selector *@
+    <div class="selector-actions mt-3">
+        <button class="btn btn-primary-action" disabled="@(string.IsNullOrEmpty(SelectedShelterId))"
+                @onclick="GoToShelter">
+            @GetButtonText()
+        </button>
+
+        <button class="btn btn-secondary-outline" @onclick="ViewAllPets">
+            See all pets <i class="bi bi-arrow-right-short"></i>
+        </button>
+    </div>
+</div>
+
+@code {
+    private ElementReference shelterSelectRef;
+    
+    [Parameter] public List<Shelter> Shelters { get; set; } = new();
+    [Parameter] public EventCallback<string> OnShelterSelected { get; set; }
+
+    [Parameter]
+    public string SelectedShelterId { get; set; } = string.Empty;
+
+    private async Task NotifyChange()
+    {
+        await OnShelterSelected.InvokeAsync(SelectedShelterId);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Task.Delay(100);
+            await shelterSelectRef.FocusAsync();
+        }
+    }
+
+    private string GetButtonText()
+    {
+        if (string.IsNullOrEmpty(SelectedShelterId)) return "Select a shelter"; 
+        
+        var name = Shelters.FirstOrDefault(s => s.Id == SelectedShelterId)?.Name ?? "Shelter"; 
+        return $"Go to {name}";
+    }
+
+    private void GoToShelter()
+    {
+        Console.WriteLine($"Navegando a shelter: {SelectedShelterId}"); // Debug en consola
+        if (!string.IsNullOrEmpty(SelectedShelterId))
+        {
+            Nav.NavigateTo($"/shelters/{SelectedShelterId}");
+        }
+    }
+
+    private void ViewAllPets() => Nav.NavigateTo("/pets"); 
+}

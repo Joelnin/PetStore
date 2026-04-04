@@ -1,0 +1,46 @@
+@using PetStore.Services
+@inject PetService PetService
+
+<div class="stats-grid">
+    @if (isLoading)
+    {
+        <div class="stats-loading">
+            <div class="spinner-grow text-warning" role="status"></div>
+        </div>
+    }
+    else
+    {
+        <div class="stat-box">
+            <span class="stat-number">@totalPets</span>
+            <span class="stat-text">Pets waiting for you</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-number">@totalShelters</span>
+            <span class="stat-text">Partner Shelters</span>
+        </div>
+    }
+</div>
+
+@code {
+    private int totalPets;
+    private int totalShelters;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var (pets, shelters) = await PetService.GetGlobalTotalsAsync();
+            totalPets = pets;
+            totalShelters = shelters;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching stats: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

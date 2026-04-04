@@ -1,0 +1,103 @@
+.shelter-selector-container {
+    margin: 1.5rem 0;
+    padding: 0; 
+}
+
+.selector-label {
+    display: block;
+    color: var(--brand-pine-teal);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.custom-select {
+    width: 100%;
+    padding: 0.8rem 1.2rem;
+    border: 3px solid var(--brand-pine-teal); 
+    border-radius: 1.5rem; 
+    background-color: #ffffff;
+    color: var(--brand-pine-teal);
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    appearance: none; 
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231b4332' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+}
+
+.custom-select:focus {
+    border-color: var(--brand-orange);
+    color: var(--brand-orange);
+    box-shadow: 0 0 0 4px rgba(251, 133, 0, 0.2); 
+    transform: translateY(-2px); 
+}
+
+.custom-select:hover {
+    border-color: var(--brand-orange);
+}
+
+.shelter-selector-container {
+    max-width: 500px;
+}
+
+.custom-select {
+    border: 2px solid var(--brand-pine-teal);
+    border-radius: 50px; 
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    color: var(--brand-pine-teal);
+}
+
+.custom-select:focus {
+    border-color: var(--brand-amber-gold);
+    box-shadow: 0 0 0 0.25rem rgba(255, 191, 0, 0.25);
+}
+
+.selector-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.btn-primary-action {
+    background-color: var(--brand-orange);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 0.8rem 2rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 0px #b35f00; 
+}
+
+.btn-primary-action:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0px #b35f00;
+    background-color: #e67a00;
+}
+
+.btn-primary-action:disabled {
+    background-color: #e5e7eb;
+    box-shadow: none;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.btn-secondary-outline {
+    background: transparent;
+    color: var(--brand-pine-teal);
+    border: none;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color 0.2s ease;
+}
+
+.btn-secondary-outline:hover {
+    color: var(--brand-orange);
+}

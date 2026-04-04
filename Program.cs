@@ -1,5 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+//Namespaces
 using PetStore.Components;
 using PetStore.Data;
 using PetStore.Services;
@@ -7,31 +11,49 @@ using PetStore.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ====================== Services ======================
+// ====================== Services & Database ======================
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+    ?? "Data Source=petstore.db";
 
 builder.Services.AddDbContext<PetStoreContext>(options =>
     options.UseSqlite(connectionString));
 
+// Inyectamos el servicio central de la lógica de negocio
+builder.Services.AddScoped<PetService>();
 
+// ====================== ASP.NET Core Identity ======================
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 6;
     options.SignIn.RequireConfirmedAccount = false;
 })
 .AddEntityFrameworkStores<PetStoreContext>()
 .AddDefaultTokenProviders();
 
+// ====================== Authentication (Google/MS) ======================
+// Mantenemos tu configuración de Auth de la rama personal
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    })
+    .AddCookie()
+    .AddGoogle(googleOptions =>
+    {
+        googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+        googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+    })
+    .AddMicrosoftAccount(msOptions =>
+    {
+        msOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"]!;
+        msOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"]!;
+    });
+
+// ====================== UI & Blazor ======================
+builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-
-builder.Services.AddScoped<PetService>();
-builder.Services.AddCascadingAuthenticationState();
 
 var app = builder.Build();
 
@@ -47,14 +69,12 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseAntiforgery();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
-
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 

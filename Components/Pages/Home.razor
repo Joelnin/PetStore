@@ -1,18 +1,113 @@
 ﻿@page "/"
 @using PetStore.Services
-@using PetStore.Models
+@inject NavigationManager NavManager
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
 @inject PetService PetService
 
-<PageTitle>Pawsitive Friends</PageTitle>
+<PageTitle>Pawsitive Friends | Home</PageTitle>
 
-<section class="home-hero">
-  <h1>Welcome to Pawsitive Friends</h1>
-  <p>
-    Browse animals by category and find a pet you would love to adopt, foster, or sponsor.
-  </p>
+<div class="container-centered">
+    <div class="row align-items-center hero-split">
+        @* Find a Shelter *@
+        <div class="col-lg-6 hero-text-section">
+            <h1 class="display-4 fw-bold">Search to find your <span class="text-highlight">new best friend.</span></h1>
+            <p class="lead mb-4">Connecting loving families with pets in need. Start by selecting a shelter near you.
+            </p>
+            
+            <div class="selector-wrapper">
+                <ShelterSelector Shelters="allShelters" OnShelterSelected="HandleShelterSelection" />
+            </div>
+        </div>
+
+        @* Hero *@
+        <div class="col-lg-6 d-none d-lg-block">
+            <div class="hero-image-container">
+                <img src="images/heroes/default-hero-home.webp" alt="Pawsitive Friends Hero"
+                     class="img-fluid hero-image appearing-image" @ref="heroImageRef" id="hero-dog-image" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="container-centered">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <ActionCard Title="Adopt" Description="Find your perfect match and give a pet a forever home."
+                        LinkText="View Pets" TargetUrl="/pets" />
+        </div>
+        <div class="col-md-4">
+            <ActionCard Title="Donate" Description="Support our mission with food, medicine, and shelter."
+                        LinkText="Give Today" TargetUrl="/donate" />
+        </div>
+        <div class="col-md-4">
+            <ActionCard Title="Volunteer" Description="Share your time and love with animals in need."
+                        LinkText="Join Us" TargetUrl="/volunteer" />
+        </div>
+    </div>
 </section>
 
+@if (!string.IsNullOrEmpty(selectedShelterId))
+{
+    <div class="container-centered mt-5">
+        <div class="results-area p-4 rounded-3 bg-white shadow-sm border-start border-primary border-4">
+            <p class="mb-0">Showing pets for shelter ID: <strong>@selectedShelterId</strong></p>
+        </div>
+    </div>
+}
+<section class="impact-section container-centered py-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6 mb-5 mb-lg-0">
+            <div class="impact-image-container">
+                <img src="images/banner/our-mission.webp" alt="Our Mission" class="impact-img-3d" />
+            </div>
+        </div>
+
+        <div class="col-lg-6 ps-lg-5 mission-text">
+            <h2 class="section-title">Our Mission</h2>
+            <p class="section-description">
+                Every animal deserves a safe place to call home. We partner with local shelters
+                to provide care and find forever families, ensuring every tail finds its happy ending.
+            </p>
+            
+            <GlobalStats />
+        </div>
+    </div>
+</section>
 
 @code {
+    private ElementReference heroImageRef;
+    private IJSObjectReference? scrollModule;
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            scrollModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/heroScroll.js");
+            await scrollModule.InvokeVoidAsync("initHeroScroll", "hero-dog-image");
+        }
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (scrollModule is not null)
+        {
+            await scrollModule.InvokeVoidAsync("disposeHeroScroll");
+            await scrollModule.DisposeAsync();
+        }
+    }
+    private string selectedShelterId = string.Empty;
+
+    private List<Shelter> allShelters = new();
+    private string selectedId = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        allShelters = PetService.GetAllShelters();
+    }
+
+    private void HandleShelterSelection(string id)
+    {
+        selectedId = id;
+    }
 }
