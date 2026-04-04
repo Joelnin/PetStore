@@ -1,0 +1,88 @@
+@page "/shelters"
+
+@using Microsoft.VisualBasic
+@using PetStore.Models
+@using PetStore.Services
+@using CountryData.Standard
+
+@inject PetService PetService
+@inject NavigationManager NavManager
+
+<PageTitle>Shelters</PageTitle>
+
+<h1>@PageTitleText</h1>
+
+
+<div class="shelter-filters">
+  <a href="/shelters">All</a>
+
+  @foreach (var c in availableCountries)
+  {
+      <a href="/shelters?country=@c">
+          @(GetCountry(c) ?? c)
+      </a>
+  }
+</div>
+
+<div class="shelters-container">
+  
+  <div class="shelter-grid">
+
+    @foreach (var shelter in filteredShelters)
+    {
+          <NavLink class="shelter-card" href="@($"/shelters/{shelter.Id}")">
+
+
+        <h3>@shelter.Name</h3>
+        <p>Click to view shelter info</p>
+        
+        <p><strong>Location:</strong> @GetCountry(shelter.Country)</p>
+
+      </NavLink>
+  }
+</div>
+</div>
+
+
+@code {
+  [Parameter]
+  [SupplyParameterFromQuery(Name = "country")] 
+  public string? country { get; set; }
+
+  private List<Shelter> filteredShelters = new();
+  private List<string> availableCountries = new();
+  private CountryHelper _helper = new CountryHelper();
+
+  private string PageTitleText =>
+      string.IsNullOrWhiteSpace(country)
+          ? "Shelters"
+          : "Shelters in " + GetCountry(country);
+
+  string mayus(string text){
+    if (string.IsNullOrEmpty(text)) return text;
+    return char.ToUpper(text[0]) + text.Substring(1);
+  }
+
+  string GetCountry(string code){
+      return mayus(_helper.GetCountryByCode(code).CountryName);
+  }
+
+
+  protected override void OnParametersSet()
+  {
+      availableCountries = PetService.GetAllShelters()
+          .Select(s => s.Country)
+          .Distinct(StringComparer.OrdinalIgnoreCase)
+          .OrderBy(s => s)
+          .ToList();
+
+      if (string.IsNullOrWhiteSpace(country))
+      {
+          filteredShelters = PetService.GetAllShelters();
+      }
+      else
+      {
+          filteredShelters = PetService.GetSheltersByCountry(country);
+      }
+  }
+}

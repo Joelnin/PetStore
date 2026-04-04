@@ -1,0 +1,16 @@
+<div class="action-card">
+    <div class="card-content">
+        <h3 class="card-title">@Title</h3>
+        <p class="card-description">@Description</p>
+        <a href="@TargetUrl" class="card-link">
+            @LinkText <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = string.Empty;
+    [Parameter] public string Description { get; set; } = string.Empty;
+    [Parameter] public string LinkText { get; set; } = string.Empty;
+    [Parameter] public string TargetUrl { get; set; } = "#";
+}

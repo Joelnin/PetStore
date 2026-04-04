@@ -1,0 +1,71 @@
+@page "/pet/{id}"
+@using PetStore.Models
+@using PetStore.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject PetService PetService
+@inject NavigationManager Navigation
+
+<PageTitle>Pet Details</PageTitle>
+
+@if (selectedPet is null)
+{
+  <p>Pet not found.</p>
+}
+else
+{
+  <section class="pet-details">
+    <img src="@selectedPet.ImageUrl" alt="@selectedPet.Name" class="pet-details-image" />
+
+    <h1>@selectedPet.Name</h1>
+
+    <p><strong>Category:</strong> @selectedPet.Type</p>
+    @* <p><strong>Age:</strong> @selectedPet.Age</p> *@
+    <p><strong>Breed:</strong> @selectedPet.Breed</p>
+    <p>@selectedPet.Description</p>
+
+    <AuthorizeView>
+
+      <NotAuthorized>
+        <div class="pet-help-box">
+          <p>Please sign in if you'd like to help @selectedPet.Name.</p>
+          <NavLink class="signin-button" href="/signin">Sign In</NavLink>
+        </div>
+        @* <div class="help-buttons">
+          <button class="help-button" @onclick="GoToApplication">
+            I'd Love To Help!
+          </button>
+        </div> *@
+      </NotAuthorized>
+
+      <Authorized>
+        <div class="pet-help-box">
+          <h3>Would you like to help @selectedPet.Name?</h3>
+
+          <div class="help-buttons">
+            <button class="help-button" @onclick="GoToApplication">
+              I'd Love To Help!
+            </button>
+          </div>
+        </div>
+      </Authorized>
+
+    </AuthorizeView>
+  </section>
+}
+
+@code {
+  [Parameter]
+  public required string id { get; set; }
+
+  private Pet? selectedPet;
+  void GoToApplication()
+  {
+    Navigation.NavigateTo("/application");
+  }
+
+  protected override void OnParametersSet()
+  {
+    selectedPet = PetService.GetPetById(id);
+  }
+}

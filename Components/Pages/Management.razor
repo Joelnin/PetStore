@@ -1,0 +1,91 @@
+@page "/management"
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = Roles.Admin)]
+
+@using PetStore.Models
+@using PetStore.Services
+@inject PetService PetService
+@inject NavigationManager NavigationManager
+
+<h1>Pet Management</h1>
+<!-- Navigation buttons for admin actions -->
+<button type="button" @onclick="CreatePet">Add Pet</button>
+<button type="button" @onclick="AddCategory">Manage Categories</button>
+
+<!-- Display basic pet information -->
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Category</th>
+      <th>Breed</th>
+      <th>Age</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var pet in pets)
+    {
+      <tr>
+        <td>@pet.Name</td>
+        <td>@pet.Type</td>
+        <td>@pet.Breed</td>
+        <!-- Convert YearOfBirth to approximate age -->
+        <td>@GetAge(pet.YearOfBirth)</td>
+        <!-- Edit navigates to edit page with pet id, and delete removes pet and refreshes list -->
+        <td>
+          <button class="btn btn-success me-2" type="button" @onclick="() => EditPet(pet.Id)">Edit</button>
+          <button class="btn btn-danger me-2" type="button" @onclick="() => DeletePet(pet.Id)">Delete</button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
+
+@code {
+  // Holds all pets displayed in table
+  private List<Pet> pets = new();
+
+  // Loads the pets when the page first renders
+  protected override void OnInitialized()
+  {
+    LoadPets();
+  }
+
+  // Gets all pets from service/db and updates the table
+  private void LoadPets()
+  {
+    pets = PetService.GetAllPets();
+  }
+
+  // Takes admin to add pet page
+  private void CreatePet()
+  {
+    NavigationManager.NavigateTo("/management/add");
+  }
+
+  // Takes admin to edit page for the selected pet
+  private void EditPet(string id)
+  {
+    NavigationManager.NavigateTo($"/management/edit/{id}");
+  }
+
+  // Deletes the selected pet and refreshes the list
+  private void DeletePet(string id)
+  {
+    PetService.DeletePet(id);
+    LoadPets();
+  }
+
+  // Takes admin to the category management page
+  private void AddCategory()
+  {
+    NavigationManager.NavigateTo("/management/categories");
+  }
+
+   // Converts a birth year into an approximate age.
+  private int GetAge(int yearOfBirth)
+  {
+    return DateTime.Now.Year - yearOfBirth;
+  }
+}

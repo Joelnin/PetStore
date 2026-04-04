@@ -8,18 +8,20 @@ using PetStore.Components;
 using PetStore.Data;
 using PetStore.Services;
 using PetStore.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// ====================== Services ======================
+// ====================== Services & Database ======================
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? "Data Source=petstore.db"; // Fallback for appsettings;
+    ?? "Data Source=petstore.db";
 
 builder.Services.AddDbContext<PetStoreContext>(options =>
     options.UseSqlite(connectionString));
 
+// Inyectamos el servicio central de la lógica de negocio
 builder.Services.AddScoped<PetService>();
-// ====================== ASP.NET Core Identity ======================
 
+// ====================== ASP.NET Core Identity ======================
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = true;
@@ -30,7 +32,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddDefaultTokenProviders();
 
 // ====================== Authentication (Google/MS) ======================
-
+// Mantenemos tu configuración de Auth de la rama personal
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -49,7 +51,6 @@ builder.Services.AddAuthentication(options =>
     });
 
 // ====================== UI & Blazor ======================
-
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -68,7 +69,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseAntiforgery();           
+app.UseAntiforgery();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -80,7 +81,7 @@ app.MapRazorComponents<App>()
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<PetStoreContext>();
-    db.Database.EnsureCreated();
+    db.Database.Migrate();
 }
 
 app.Run();

@@ -1,14 +1,32 @@
 ﻿@inherits LayoutComponentBase
 
 <div class="page">
-  <aside class="sidebar">
-    <NavMenu />
-  </aside>
-
   <main>
-    <header class="top-row px-4">
-      <div class="top-row-right">
-        <a class="signin-link" href="/signin">Sign In</a>
+    <header class="top-row">
+      <div class="container-centered">
+        @* Logo *@
+        <div class="me-auto">
+          <a href="/" class="brand-link">
+            <img src="images/logo-pawsitive-friends.svg" alt="Pawsitive Friends" height="48" />
+            <span class="brand-text d-none d-md-flex">
+              <span class="line-1">Pawsitive</span>
+              <span class="line-2">Friends</span>
+            </span>
+          </a>
+        </div>
+
+        @* Nav *@
+        <nav class="d-none d-lg-flex">
+          <NavLink class="nav-link" href="about">About Us</NavLink>
+          <NavLink class="nav-link" href="pets">Adopt</NavLink>
+          <NavLink class="nav-link" href="shelters">Shelters</NavLink>
+          <NavLink class="nav-link" href="contact">Contact Us</NavLink>
+        </nav>
+
+        @* Auth *@
+        <div class="ms-4">
+          <a class="signin-link btn btn-outline-primary" href="/signin">Sign In</a>
+        </div>
       </div>
     </header>
 
@@ -18,8 +36,5 @@
   </main>
 </div>
 
-<div id="blazor-error-ui" data-nosnippet>
-  An unhandled error has occurred.
-  <a href="." class="reload">Reload</a>
-  <span class="dismiss">🗙</span>
-</div>
+@code {
+}

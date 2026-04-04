@@ -16,16 +16,14 @@ else
   <div class="category-grid">
     @foreach (var pet in filteredPets)
     {
-      <NavLink class="category-card" href="@($"/pet/{pet.Id}")">
+      <NavLink class="pet-card" href="@($"/pet/{pet.Id}")">
         <div class="pet-image-container">
           <img src="@pet.ImageUrl" alt="@pet.Name" />
         </div>
 
         <h3>@pet.Name</h3>
-
-        <p>@pet.Description</p>
-
-        <p><strong>Age:</strong> @pet.Age</p>
+        
+        @* <p><strong>Age:</strong> @pet.Age</p> *@
 
       </NavLink>
     }

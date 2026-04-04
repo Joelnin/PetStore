@@ -1,0 +1,140 @@
+@page "/pets"
+
+@using Microsoft.VisualBasic
+@using PetStore.Models
+@using PetStore.Services
+@inject PetService PetService
+@inject NavigationManager NavManager
+
+<PageTitle>Pets</PageTitle>
+
+<h1>@PageTitleText</h1>
+
+<!-- Filter links for viewing pets by category-->
+<div class="pet-filters">
+  <a href="/pets">All</a>
+
+  @foreach (var t in availableTypes)
+  {
+    <a href="/pets?type=@t">
+      @mayus(t)
+    </a>
+  }
+</div>
+
+<div class="pets-container">
+  
+  @if (filteredPets.Count == 0)
+  {
+    <!-- Display message if no pets match the filter -->
+    <p>No pets found in this category.</p>
+  }
+  else
+  {
+    <div class="pets-grid">
+
+      @foreach (var pet in filteredPets)
+      {
+        <div class="pet-card">
+
+          <div>
+            <div class="pet-image-container">
+              <img src="@pet.ImageUrl" alt="@pet.Name image" />
+            </div>
+
+            <h3>@pet.Name</h3>
+
+            @{
+              // Calculate pet age from year of birth
+              int age = DateTime.Now.Year - pet.YearOfBirth;
+            }
+    
+            <p>
+              <strong>Age: </strong>
+              @if (age < 1)
+              {
+                <span>Less than a year old</span>
+              }
+              else
+              {
+                <span>@age @(age == 1 ? "year" : "years") old</span>
+              }
+            </p>
+          </div>
+
+          <div>
+            <!-- Additional pet details -->
+            <p><strong>Breed: </strong>@pet.Breed</p>
+
+            <p>
+              <strong>Energy: </strong>
+              @for (int i = 1; i <= 5; i++)
+              {
+                if (i <= pet.Energy)
+                {
+                  <!-- Highlight filled energy levels -->
+                  <span style="color: #FFD700;">⚡</span>
+                }
+                else
+                {
+                  <!-- Dim remaining energy levels -->
+                  <span style="color: #ccc; opacity: 0.2;">⚡</span>
+                }
+              }
+            </p>
+
+            <p><strong>Description:</strong> @pet.Description</p>
+          </div>
+
+        </div>
+      }
+    </div>
+  }
+</div>
+
+@code {
+  // Query parameter from URL
+  [Parameter]
+  [SupplyParameterFromQuery(Name = "type")]
+  public string? type { get; set; }
+
+  // List of pets to display after filtering
+  private List<Pet> filteredPets = new();
+
+  // Unique list of available pet types for filter links
+  private List<string> availableTypes = new();
+
+  // Dynamically updates page title based on selected filter
+  private string PageTitleText =>
+      string.IsNullOrWhiteSpace(type)
+          ? "Pets"
+          : mayus(type);
+
+
+  // Capitalizes the first letter of a string for display purposes.
+  string mayus(string text)
+  {
+    if (string.IsNullOrEmpty(text)) return text;
+    return char.ToUpper(text[0]) + text.Substring(1);
+  }
+
+  protected override void OnParametersSet()
+  {
+    // Get all unique pet types for filtering
+    availableTypes = PetService.GetAllPets()
+        .Select(p => p.Type)
+        .Distinct(StringComparer.OrdinalIgnoreCase)
+        .OrderBy(t => t)
+        .ToList();
+
+    // Apply filter based on query parameter
+    if (string.IsNullOrWhiteSpace(type))
+    {
+      filteredPets = PetService.GetAllPets();
+    }
+    else
+    {
+      filteredPets = PetService.GetPetsByCategory(type);
+    }
+  }
+}

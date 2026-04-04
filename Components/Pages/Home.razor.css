@@ -1,0 +1,30 @@
+.mission-text h2 {
+    color: var(--brand-pine-teal);
+    font-weight: 800;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    line-height: 1.1;
+}
+
+.impact-image-container {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 300px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.impact-img-3d {
+  width:auto;
+  height: 100%;
+  object-fit: container;
+  object-position: center;
+  animation: floatingImpact 12s ease-in-out infinite;
+}
+
+@keyframes floatingImpact {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(1deg); }
+}

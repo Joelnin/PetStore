@@ -1,0 +1,61 @@
+.action-card {
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 2rem;
+    height: 100%;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card-content {
+    text-align: center;
+}
+
+.card-title {
+    color: var(--brand-pine-teal); 
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+}
+
+.card-description {
+    color: #4b5563;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+}
+
+.card-link {
+    color: var(--brand-orange);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: auto;
+}
+
+/* --- HOVER STATE: AMBER GOLD --- */
+
+.action-card:hover {
+    background-color: var(--brand-amber-gold);
+    border-color: var(--brand-orange);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(255, 191, 0, 0.3);
+}
+
+.action-card:hover .card-title,
+.action-card:hover .card-description,
+.action-card:hover .card-link {
+    color: var(--text-dark);
+}
+
+.action-card:hover .card-link {
+    text-decoration: underline;
+}

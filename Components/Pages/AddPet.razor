@@ -1,0 +1,153 @@
+@page "/management/add"
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = Roles.Admin)]
+
+@using PetStore.Models
+@using PetStore.Services
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Authorization
+@using System.IO
+
+@inject PetService PetService
+@inject NavigationManager NavigationManager
+@inject IWebHostEnvironment Env
+
+<h1>Add Pet</h1>
+
+<EditForm Model="newPet" OnValidSubmit="SavePet" FormName="AddPetForm">
+  <DataAnnotationsValidator />
+
+  <div>
+    <label>Name:</label>
+    <InputText class="form-control" @bind-Value="newPet.Name" />
+    <ValidationMessage For="@(() => newPet.Name)" />
+  </div>
+
+  <div>
+    <label>Type:</label>
+    <InputSelect class="form-control" @bind-Value="newPet.Type">
+      <option value="">Select a Type</option>
+      @foreach (var type in categories)
+      {
+        <option value="@type.Name">@type.Name</option>
+      }
+    </InputSelect>
+    <ValidationMessage For="@(() => newPet.Type)" />
+  </div>
+
+  <div>
+    <label>Breed:</label>
+    <InputText class="form-control" @bind-Value="newPet.Breed" />
+    <ValidationMessage For="@(() => newPet.Breed)" />
+  </div>
+
+  <div>
+    <label>Year of Birth:</label>
+    <InputNumber class="form-control" @bind-Value="newPet.YearOfBirth" />
+    <ValidationMessage For="@(() => newPet.YearOfBirth)" />
+  </div>
+
+  <div>
+    <!-- Textarea for longer description input -->
+    <label>Description:</label>
+    <InputTextArea class="form-control" @bind-Value="newPet.Description" />
+  </div>
+
+  <div>
+    <!-- Default image link if user doesn't upload -->
+    <label>Image URL:</label>
+    <InputText class="form-control" @bind-Value="newPet.ImageUrl" placeholder="Default used if empty" />
+  </div>
+
+  <div>
+    <!-- Allows user to upload an image file from their computer -->
+    <label>Upload Image:</label>
+    <InputFile OnChange="HandleFileSelected" accept="image/*" />
+
+    @if (!string.IsNullOrWhiteSpace(uploadMessage))
+    {
+      <p>@uploadMessage</p>
+    }
+  </div>
+
+  <button type="submit">Save</button>
+  <button type="button" @onclick="Cancel">Cancel</button>
+</EditForm>
+
+@code {
+  // Model bound to the form inputs
+  [SupplyParameterFromForm]
+  private Pet newPet { get; set; } = new();
+
+  // List of pet categories loaded from the service
+  private List<PetCategory> categories = new();
+
+  // Holds the uploaded file temporarily
+  private IBrowserFile? selectedFile;
+
+  // Message shown after selecting a file
+  private string uploadMessage = "";
+
+  // Load all categories when the page initializes
+  protected override void OnInitialized()
+  {
+    categories = PetService.GetAllCategories();
+  }
+
+  // Handles file selection from the InputFile component.
+  // Stores the file for later processing.
+  private void HandleFileSelected(InputFileChangeEventArgs e)
+  {
+    selectedFile = e.File;
+
+    uploadMessage = selectedFile is not null
+        ? $"Selected file: {selectedFile.Name}"
+        : "";
+  }
+
+   // Saves the pet to the database.
+   // If an image is uploaded, it is stored in wwwroot and linked.
+   // Otherwise, a default image is used.
+  private async Task SavePet()
+  {
+    if (selectedFile is not null)
+    {
+      // Create folder path inside wwwroot for storing images
+      var uploadsFolder = Path.Combine(Env.WebRootPath, "images", "pets");
+
+      if (!Directory.Exists(uploadsFolder))
+      {
+        Directory.CreateDirectory(uploadsFolder);
+      }
+
+      // Generate unique file name to avoid overwriting
+      var extension = Path.GetExtension(selectedFile.Name);
+      var fileName = $"{Guid.NewGuid()}{extension}";
+      var filePath = Path.Combine(uploadsFolder, fileName);
+
+      // Save file with size limit (5 MB)
+      await using FileStream fs = new(filePath, FileMode.Create);
+      await selectedFile.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024).CopyToAsync(fs);
+
+      // Store relative path so the image can be displayed in the app
+      newPet.ImageUrl = $"/images/pets/{fileName}";
+    }
+    else if (string.IsNullOrWhiteSpace(newPet.ImageUrl))
+    {
+      // Fallback image if no upload or URL is provided
+      newPet.ImageUrl = "https://raw.githubusercontent.com/vsyang/pet-images/main/unavailable.jpg";
+    }
+
+    // Save pet using service
+    PetService.AddPet(newPet);
+
+    // Redirect back to management page
+    NavigationManager.NavigateTo("/management");
+  }
+
+   // Cancels the operation and returns to management page.
+  private void Cancel()
+  {
+    NavigationManager.NavigateTo("/management");
+  }
+}

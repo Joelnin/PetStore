@@ -1,0 +1,178 @@
+@page "/management/categories"
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = Roles.Admin)]
+
+@using PetStore.Models
+@using PetStore.Services
+@inject PetService PetService
+
+<h1>Category Management</h1>
+<!-- Form to create a new category -->
+<EditForm Model="newCategory" OnValidSubmit="AddCategory">
+  <DataAnnotationsValidator />
+
+  <div class="mb-3">
+    <label class="form-label">Name</label>
+    <InputText class="form-control" @bind-Value="newCategory.Name" />
+    <ValidationMessage class="text-danger" For="@(() => newCategory.Name)" />
+  </div>
+
+  <button type="submit" class="btn btn-primary">Add Category</button>
+</EditForm>
+
+<hr />
+<!-- Displays error messages (example: "Cannot delete category in use") -->
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+  <p class="text-danger">@errorMessage</p>
+}
+
+<h3>Current Categories</h3>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th style="width:200px;">Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    @foreach (var category in categories)
+    {
+      <tr>
+        @if (editCategory?.Id == category.Id)
+        {
+          <!-- Allows admin to edit inline instead of going to a new page -->
+          <td>
+            <InputText class="form-control" @bind-Value="editCategory.Name" />
+          </td>
+
+          <td>
+            <button class="btn btn-success me-2" @onclick="SaveEdit">
+              Save
+            </button>
+
+            <button class="btn btn-secondary" @onclick="CancelEdit">
+              Cancel
+            </button>
+          </td>
+        }
+        else
+        {
+          <!-- Normal display -->
+          <td>@FormatCategoryName(category.Name)</td>
+
+          <td>
+            <button class="btn btn-warning me-2" @onclick="() => StartEdit(category)">
+              Edit
+            </button>
+
+            <button class="btn btn-danger" @onclick="() => DeleteCategory(category.Id)">
+              Delete
+            </button>
+          </td>
+        }
+      </tr>
+    }
+  </tbody>
+</table>
+
+@code {
+  // Holds the new category being created from the form
+  private PetCategory newCategory = new();
+
+  // Stores the category being edited and is null when not being edited
+  private PetCategory? editCategory;
+
+  // List of all the categories displayed in the table
+  private List<PetCategory> categories = new();
+
+  // Error message shown to the admin (Example: delete restriction)
+  private string errorMessage = "";
+
+  // Load categories when page initializes
+  protected override void OnInitialized()
+  {
+    LoadCategories();
+  }
+
+  // Gets all categories from service/db
+  private void LoadCategories()
+  {
+    categories = PetService.GetAllCategories();
+  }
+
+  // Adds a new category and converts to lowercase for consistency
+  private void AddCategory()
+  {
+    errorMessage = "";
+
+    newCategory.Name = newCategory.Name.Trim().ToLower();
+
+    PetService.AddCategory(newCategory);
+
+    newCategory = new();
+    LoadCategories();
+  }
+
+  // Begins editing mode for selected category. This will create a copy so changes aren't applied until saved
+  private void StartEdit(PetCategory category)
+  {
+    errorMessage = "";
+
+    editCategory = new PetCategory
+    {
+      Id = category.Id,
+      Name = category.Name,
+    };
+  }
+
+  // Saves the edited category and updates the list, while converting to lowercase for consistency
+  private void SaveEdit()
+  {
+    if (editCategory == null) return;
+
+    errorMessage = "";
+
+    editCategory.Name = editCategory.Name.Trim().ToLower();
+
+    PetService.UpdateCategory(editCategory);
+
+    editCategory = null;
+
+    LoadCategories();
+  }
+
+  // Cancels edit mode and resets state
+  private void CancelEdit()
+  {
+    editCategory = null;
+    errorMessage = "";
+  }
+
+  // Deletes a category as long as no pets are using; if there is a pet in the category, error message will display
+  private void DeleteCategory(int id)
+  {
+    bool deleted = PetService.DeleteCategory(id);
+
+    if (!deleted)
+    {
+      errorMessage = "Cannot delete this category because pets are still using it.";
+    }
+    else
+    {
+      errorMessage = "";
+      LoadCategories();
+    }
+  }
+
+  // Formats category names for display; capitalize the first letter and lowercase the rest of word
+  private string FormatCategoryName(string name)
+  {
+    if (string.IsNullOrWhiteSpace(name))
+      return "";
+
+    return char.ToUpper(name[0]) + name.Substring(1).ToLower();
+  }
+}

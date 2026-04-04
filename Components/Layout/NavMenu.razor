@@ -1,24 +1,71 @@
-﻿<nav class="nav-menu">
+﻿@using PetStore.Services
+@using PetStore.Models
+@inject PetService PetService
 
+<!-- Navigation menu for the application -->
+<nav class="nav-menu">
+
+    <!-- Home link -->
     <NavLink href="/" Match="NavLinkMatch.All">
         Home
     </NavLink>
 
+    <!-- Pets dropdown menu -->
     <div class="pets-menu">
-        <span>Pets</span>
+        <NavLink href="@($"/pets")">Pets</NavLink>
 
+        <!-- Dynamically generated list of pet categories -->
         <div class="pets-list">
-            <NavLink href="/petdisplay/dogs">Dogs</NavLink>
-            <NavLink href="/petdisplay/cats">Cats</NavLink>
-            <NavLink href="/petdisplay/dragons">Dragons</NavLink>
-            <NavLink href="/petdisplay/unicorns">Unicorns</NavLink>
-            <NavLink href="/petdisplay/birds">Birds</NavLink>
-            <NavLink href="/petdisplay/elephants">Elephants</NavLink>
+            @foreach (var category in categories)
+            {
+                <NavLink href="@($"/pets?type={category.Name}")">
+                    @FormatCategoryName(category.Name)
+                </NavLink>
+            }
         </div>
     </div>
 
+    <!-- Shelters page -->
+    <NavLink href="/shelters">
+        Shelters
+    </NavLink>
+
+    <!-- About us page -->
     <NavLink href="/about">
         About Us
     </NavLink>
 
+    <!-- Only visible to Admin users -->
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+            <NavLink href="/management">
+                Update Animals
+            </NavLink>
+        </Authorized>
+    </AuthorizeView>
+
 </nav>
+
+@code {
+
+    // List of categories used to populate the Pets dropdown menu
+    private List<PetCategory> categories = new();
+
+    protected override void OnInitialized()
+    {
+        // Load categories when the navigation menu initializes
+        categories = PetService.GetAllCategories();
+    }
+
+
+    // Formats category names by capitalizing the first letter; Improves display in the navigation menu.
+
+    private string FormatCategoryName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "";
+
+        return char.ToUpper(name[0]) + name.Substring(1).ToLower();
+    }
+
+}
