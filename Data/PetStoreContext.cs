@@ -4,8 +4,7 @@ using PetStore.Models;
 
 namespace PetStore.Data;
 
-// Database context for our petstore app. Manages tables and seed data using Entity Framework
-public class PetStoreContext : IdentityDbContext<ApplicationUser>
+public class PetStoreContext : IdentityDbContext<User>
 {
     public PetStoreContext(DbContextOptions<PetStoreContext> options)
         : base(options)

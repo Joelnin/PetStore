@@ -1,40 +1,59 @@
 ﻿@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Authorization
 
 <div class="page">
-  <main>
-    <header class="top-row">
-      <div class="container-centered">
-        @* Logo *@
-        <div class="me-auto">
-          <a href="/" class="brand-link">
-            <img src="images/logo-pawsitive-friends.svg" alt="Pawsitive Friends" height="48" />
-            <span class="brand-text d-none d-md-flex">
-              <span class="line-1">Pawsitive</span>
-              <span class="line-2">Friends</span>
-            </span>
-          </a>
-        </div>
+    <main>
+        <header class="top-row">
+            <div class="container-centered">
 
-        @* Nav *@
-        <nav class="d-none d-lg-flex">
-          <NavLink class="nav-link" href="about">About Us</NavLink>
-          <NavLink class="nav-link" href="pets">Adopt</NavLink>
-          <NavLink class="nav-link" href="shelters">Shelters</NavLink>
-          <NavLink class="nav-link" href="contact">Contact Us</NavLink>
-        </nav>
+                <!-- Logo / Brand - Izquierda -->
+                <div class="me-auto">
+                    <a href="/" class="brand-link">
+                        <img src="images/logo-pawsitive-friends.svg" 
+                             alt="Pawsitive Friends" 
+                             height="48" />
+                        <span class="brand-text d-none d-md-flex">
+                            <span class="line-1">Pawsitive</span>
+                            <span class="line-2">Friends</span>
+                        </span>
+                    </a>
+                </div>
 
-        @* Auth *@
-        <div class="ms-4">
-          <a class="signin-link btn btn-outline-primary" href="/signin">Sign In</a>
-        </div>
-      </div>
-    </header>
+                <!-- Navegación - Centro -->
+                <nav class="d-none d-lg-flex">
+                    <NavLink class="nav-link" href="about">About Us</NavLink>
+                    <NavLink class="nav-link" href="pets">Adopt</NavLink>
+                    <NavLink class="nav-link" href="shelters">Shelters</NavLink>
+                    <NavLink class="nav-link" href="contact">Contact Us</NavLink>
+                </nav>
 
-    <article class="content px-4">
-      @Body
-    </article>
-  </main>
+                <!-- Auth Section - Derecha -->
+                <div class="ms-auto d-flex align-items-center">
+                    <AuthorizeView>
+                        <Authorized>
+                            <span class="me-3">Hola, @context.User.Identity?.Name</span>
+                            <a href="/account/logout" class="logout-link btn btn-outline-secondary">Cerrar Sesión</a>
+                        </Authorized>
+                        <NotAuthorized>
+                            <a href="/signin-google" class="signin-link btn btn-primary">
+                                Iniciar Sesión con Google
+                            </a>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </div>
+
+            </div>
+        </header>
+
+        <!-- Contenido principal -->
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
 </div>
 
-@code {
-}
+<div id="blazor-error-ui" data-nosnippet>
+  An unhandled error has occurred.
+  <a href="." class="reload">Reload</a>
+  <span class="dismiss">🗙</span>
+</div>
