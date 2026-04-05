@@ -31,12 +31,12 @@
                 <div class="ms-auto d-flex align-items-center">
                     <AuthorizeView>
                         <Authorized>
-                            <span class="me-3">Hola, @context.User.Identity?.Name</span>
-                            <a href="/account/logout" class="logout-link btn btn-outline-secondary">Cerrar Sesión</a>
+                            <span class="me-3">Hi, @context.User.Identity?.Name</span>
+                            <a href="/account/logout" class="logout-link btn btn-outline-secondary">Logout</a>
                         </Authorized>
                         <NotAuthorized>
                             <a href="/signin-google" class="signin-link btn btn-primary">
-                                Iniciar Sesión con Google
+                                Sign in with Google
                             </a>
                         </NotAuthorized>
                     </AuthorizeView>
