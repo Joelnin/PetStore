@@ -37,18 +37,13 @@ if (string.IsNullOrEmpty(connectionString))
 }
 
 
-Console.WriteLine($"[DB] Environment: {builder.Environment.EnvironmentName}");
-Console.WriteLine($"[DB] Connection String starts with: {connectionString.Substring(0, Math.Min(50, connectionString.Length))}...");
-
 if (builder.Environment.IsDevelopment())
 {
-    Console.WriteLine("🔹 Using SQLite for Development");
     builder.Services.AddDbContext<PetStoreContext>(options =>
         options.UseSqlite(connectionString));
 }
 else
 {
-    Console.WriteLine("🔹 Using SQL Server for Production");
     builder.Services.AddDbContext<PetStoreContext>(options =>
         options.UseSqlServer(connectionString, sqlOptions =>
         {
@@ -96,7 +91,6 @@ if (!string.IsNullOrWhiteSpace(googleClientId) &&
 }
 else
 {
-    Console.WriteLine("Google authentication secrets are missing. Google login disabled.");
 }
 
 // Enable Blazor components with server-side interactivity
