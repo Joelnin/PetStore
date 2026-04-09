@@ -28,7 +28,7 @@ if (!builder.Environment.IsDevelopment())
     }
 }
 
-// ====================== Database Configuration - FIX ======================
+// ====================== Database Configuration ======================
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 if (string.IsNullOrEmpty(connectionString))
