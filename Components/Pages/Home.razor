@@ -175,4 +175,18 @@
             await scrollModule.DisposeAsync();
         }
     }
+    private string selectedShelterId = string.Empty;
+
+    private List<Shelter> allShelters = new();
+    private string selectedId = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        allShelters = PetService.GetAllShelters();
+    }
+
+    private void HandleShelterSelection(string id)
+    {
+        selectedId = id;
+    }
 }

@@ -293,9 +293,10 @@ public class PetStoreContext : IdentityDbContext<ApplicationUser>
         Id = 1,
         FullName = "John Doe",
         Email = "john@example.com",
-        PhoneNumber = "555-1234",
+        PhoneNumber = "555-123-4567",
         HelpType = "Adopt",
         PetName = "Max",
+        ShelterName = "Golden Paws Rescue",
         SubmittedAt = new DateTime(2026, 4, 7),
         Address = "123 Main St, City, State, 12345"
       },
@@ -304,9 +305,10 @@ public class PetStoreContext : IdentityDbContext<ApplicationUser>
         Id = 2,
         FullName = "Jane Smith",
         Email = "jane@example.com",
-        PhoneNumber = "555-5678",
+        PhoneNumber = "555-567-8901",
         HelpType = "Foster",
         PetName = "Majesty",
+        ShelterName = "Whisker Haven",
         SubmittedAt = new DateTime(2026, 4, 6),
         Address = "123 Main St, City, State, 12345"
       }

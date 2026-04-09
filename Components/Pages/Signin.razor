@@ -24,3 +24,29 @@
     L.LanguageChanged -= HandleLanguageChanged;
   }
 }
+@inject NavigationManager Navigation
+
+<!-- This is the sign in page. Visitor may click sign in and be sent directly or through Pets.razor -->
+<h1>Sign In</h1>
+
+<p>Please sign in to help your Pawsitive Friend!</p>
+
+<a class="btn btn-primary" href="@googleLoginUrl">
+  Continue with Google
+</a>
+
+@code {
+  private string googleLoginUrl = "/login-google";
+
+  protected override void OnInitialized()
+  {
+    var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
+    var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+    if (query.TryGetValue("returnUrl", out var returnUrl) &&
+        !string.IsNullOrWhiteSpace(returnUrl))
+    {
+      googleLoginUrl = $"/login-google?returnUrl={Uri.EscapeDataString(returnUrl.ToString())}";
+    }
+  }
+}

@@ -71,7 +71,6 @@
           <InputRadio Value='@("Sponsor")' /> @L["Sponsor"]
         </label>
       </div>
-
     </InputRadioGroup>
   </div>
 
@@ -132,9 +131,12 @@
     </div>
   }
 
-  <!-- Hidden field to store petName passed from the URL -->
-  <InputHidden @bind-Value="@petName" />
-  
+  <!-- Hidden field to store pet name -->
+  <InputHidden @bind-Value="@application.PetName" />
+
+  <!-- Hidden field to store shelter name -->
+  <InputHidden @bind-Value="@application.ShelterName" />
+
   <div class="form-section">
     <!-- Required confirmation checkbox -->
     <label>
@@ -152,10 +154,17 @@
   // Holds all user input from the application form
   private ApplicationForm application = new();
 
-  // Tracks submission state (can be used for future enhancements)
+  // Tracks submission state
   private bool submitted = false;
 
-  private string petName;
+  // Stores the petId from the URL
+  private string? petId;
+
+  // Stores selected pet object
+  private Pet? selectedPet;
+
+  // Stores shelter name
+  private string shelterName = "Unknown Shelter";
 
   protected override void OnInitialized()
   {
@@ -164,14 +173,14 @@
     var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
     var queryParams = QueryHelpers.ParseQuery(uri.Query);
 
-    // Capture the petName from the query string and set it in the application
-    if (queryParams.TryGetValue("petName", out var name))
+    // Capture petId from the query string
+    if (queryParams.TryGetValue("petId", out var id))
     {
       petName = name;
     }
     else
     {
-      petName = L["NoPetNameProvided"];
+      petName = "No pet name provided";
     }
   }
   private async Task HandleSubmit()
@@ -179,14 +188,12 @@
     submitted = true;
 
     application.SubmittedAt = DateTime.Now;
-    application.PetName = petName;
 
     // Save the application to the database
     DbContext.ApplicationForms.Add(application);
     await DbContext.SaveChangesAsync();
 
-    // Redirect to the Thank You page with applicationId
-    
+    // Redirect to Thank You page
     Navigation.NavigateTo($"/thankyou?id={application.Id}");
   }
 

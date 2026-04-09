@@ -10,7 +10,8 @@ namespace PetStore.Models
     [Parameter]
     public int Id { get; set; }
     
-    public string PetName { get; set;  }
+    public string PetName { get; set; }
+    public string ShelterName { get; set; }
 
     // Personal information
     [Required(ErrorMessage = "Please fill in your full name")]
@@ -39,7 +40,7 @@ namespace PetStore.Models
     public string? FosterLength { get; set; }
     public string? Experience { get; set; }
     public string? Reason { get; set; }
-    public decimal? MonthlyAmount { get; set; }
+    public int? MonthlyAmount { get; set; }
 
     // Date submitted
     public DateTime SubmittedAt { get; set; } = DateTime.Now;

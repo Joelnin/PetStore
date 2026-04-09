@@ -7,5 +7,4 @@
 🐾 **Ricardo Ramos Olivares**  
 🐾 **Yeampier Huerta**  
 🐾 **Ndarama Mark**  
-🐾 **Mawuli Ayikpa**  
 

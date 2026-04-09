@@ -6,8 +6,6 @@
 @using PetStore.Services
 @inject PetService PetService
 @inject NavigationManager NavManager
-@inject LocalizationService L
-@implements IDisposable
 
 <PageTitle>@L["PetsPageTitle"]</PageTitle>
 
@@ -102,9 +100,9 @@
 
       <p><strong>@L["Description"]: </strong>@selectedPet.Description</p>
 
-      <!-- Donate button with pet name -->
-      <a href="/donate?petName=@selectedPet.Name" class="apply-button">
-          @L.Format("HelpPet", selectedPet.Name)
+      <!-- Application button with pet name -->
+      <a href="/application?petName=@selectedPet.Name" class="apply-button">
+          Help @selectedPet.Name
       </a>
     </div>
   </div>
@@ -168,17 +166,5 @@
     {
       filteredPets = PetService.GetPetsByCategory(type);
     }
-  }
-
-  protected override void OnInitialized()
-  {
-    L.LanguageChanged += HandleLanguageChanged;
-  }
-
-  private void HandleLanguageChanged() => InvokeAsync(StateHasChanged);
-
-  public void Dispose()
-  {
-    L.LanguageChanged -= HandleLanguageChanged;
   }
 }

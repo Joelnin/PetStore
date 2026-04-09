@@ -16,38 +16,32 @@
 else
 {
   <!-- Display user's name -->
-  <p>@L.Format("ThankYouName", application.FullName)</p>
+  <p>Thank you, @application.FullName!</p>
 
   <!-- Confirmation message showing selected help type -->
-  <p>@L.Format("ApplicationReceived", application.HelpType?.ToLower())</p>
+  <p>
+    We have successfully received your application to @application.HelpType?.ToLower().
+    We will review your application and reach out to you within 7 to 10 business days.
+  </p>
 
   <!-- Show additional details from the saved application -->
-  <p><strong>@L["ApplicationId"]:</strong> @application.Id</p>
-  <p><strong>@L["Submitted"]:</strong> @application.SubmittedAt.ToString("MMMM d, yyyy")</p>
+  <p><strong>Application ID:</strong> @application.Id</p>
+  <p><strong>Submitted:</strong> @application.SubmittedAt.ToString("MMMM d, yyyy")</p>
 
   <!-- Navigation back to home page -->
   <NavLink href="/">@L["ReturnHome"]</NavLink>
 }
 
 @code {
-
   [Parameter]
   [SupplyParameterFromQuery]
   public int Id { get; set; }
 
   private ApplicationForm? application;
 
-  protected override async Task OnInitializedAsync()
+  protected override async Task OnParametersSetAsync()
   {
-    L.LanguageChanged += HandleLanguageChanged;
     // Use the Id from the URL path to find the application
     application = await DbContext.ApplicationForms.FindAsync(Id);
-  }
-
-  private void HandleLanguageChanged() => InvokeAsync(StateHasChanged);
-
-  public void Dispose()
-  {
-    L.LanguageChanged -= HandleLanguageChanged;
   }
 }

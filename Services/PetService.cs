@@ -181,6 +181,12 @@ public class PetService
     return _context.Shelters.FirstOrDefault(s => s.Id == id);
   }
 
+  public string GetShelterNameById(string shelterId)
+  {
+    return _context.Shelters
+        .FirstOrDefault(s => s.Id == shelterId)?.Name ?? "Unknown Shelter";
+  }
+
   // Return dashboard totals for pets and shelters. Async is used here because database counting operations can be awaited efficiently.
   public async Task<(int pets, int shelters)> GetGlobalTotalsAsync()
   {

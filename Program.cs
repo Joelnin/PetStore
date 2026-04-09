@@ -10,31 +10,34 @@ using PetStore.Data;
 using PetStore.Services;
 using PetStore.Models;
 using System.Security.Claims;
-using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ====================== Services ======================
 
-if (!builder.Environment.IsDevelopment())
-{
-    var keyVaultUri = builder.Configuration["KEYVAULT_URI"];
 
-    if (!string.IsNullOrWhiteSpace(keyVaultUri))
-    {
-        builder.Configuration.AddAzureKeyVault(
-            new Uri(keyVaultUri),
-            new DefaultAzureCredential());
-    }
+// ====================== Database Configuration ======================
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 }
 
-// Retrieve database connection string from configuration
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? "Data Source=PetStore.db";
-
-// Configure Entity Framework with SQLite database
-builder.Services.AddDbContext<PetStoreContext>(options =>
-    options.UseSqlite(connectionString));
+if (builder.Environment.IsDevelopment())
+{   
+    builder.Services.AddDbContext<PetStoreContext>(options =>
+        options.UseSqlite(connectionString));
+}
+else
+{
+    builder.Services.AddDbContext<PetStoreContext>(options =>
+        options.UseSqlServer(connectionString, sqlOptions =>
+        {
+            sqlOptions.CommandTimeout(60);
+            sqlOptions.EnableRetryOnFailure(5);
+        }));
+}
 
 // Configure Identity system for authentication and user management
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -52,30 +55,30 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 
 // ====================== Authentication ======================
 
-// Siempre inicializamos Authentication
+// Initialize Authentication
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultScheme = IdentityConstants.ApplicationScheme;
-    options.DefaultChallengeScheme = IdentityConstants.ExternalScheme;
+  options.DefaultScheme = IdentityConstants.ApplicationScheme;
+  options.DefaultChallengeScheme = IdentityConstants.ExternalScheme;
 });
 
-// Obtener credenciales desde configuración (appsettings o ENV)
+// Getting credentials  (appsettings)
 var googleClientId = builder.Configuration["Authentication:Google:ClientId"];
 var googleClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
 
 if (!string.IsNullOrWhiteSpace(googleClientId) &&
     !string.IsNullOrWhiteSpace(googleClientSecret))
 {
-    builder.Services.AddAuthentication().AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
-    {
-        options.ClientId = googleClientId;
-        options.ClientSecret = googleClientSecret;
-        options.ClaimActions.MapJsonKey(ClaimTypes.GivenName, "given_name");
-    });
+  builder.Services.AddAuthentication().AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+  {
+    options.ClientId = googleClientId;
+    options.ClientSecret = googleClientSecret;
+    options.ClaimActions.MapJsonKey(ClaimTypes.GivenName, "given_name");
+  });
 }
 else
 {
-    Console.WriteLine("Google authentication secrets are missing. Google login disabled.");
+  Console.WriteLine("Google authentication secrets are missing. Google login disabled.");
 }
 
 // Enable Blazor components with server-side interactivity
@@ -220,14 +223,24 @@ app.MapGet("/signin-google-callback", async (
 
   // ====================== Role Assignment ======================
 
-  var adminEmail = config["AdminSettings:SeedAdminEmail"];
+  var adminEmails = config
+    .GetSection("AdminSettings:SeedAdminEmails")
+    .Get<string[]>() ?? Array.Empty<string>();
 
-  if (!string.IsNullOrWhiteSpace(adminEmail) &&
-      email.Equals(adminEmail, StringComparison.OrdinalIgnoreCase))
+  var isAdmin = adminEmails.Any(a =>
+    !string.IsNullOrWhiteSpace(a) &&
+    email.Equals(a, StringComparison.OrdinalIgnoreCase));
+
+  if (isAdmin)
   {
     if (!await userManager.IsInRoleAsync(user, Roles.Admin))
     {
       await userManager.AddToRoleAsync(user, Roles.Admin);
+    }
+
+    if (await userManager.IsInRoleAsync(user, Roles.Client))
+    {
+      await userManager.RemoveFromRoleAsync(user, Roles.Client);
     }
   }
   else
