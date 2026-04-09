@@ -6,47 +6,49 @@
 @inject NavigationManager Navigation
 @inject PetStore.Data.PetStoreContext DbContext
 @inject PetService PetService
+@inject LocalizationService L
 @attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Client}")]
+@implements IDisposable
 
-<PageTitle>Pet Application</PageTitle>
+<PageTitle>@L["ApplicationPageTitle"]</PageTitle>
 
-<h1>Pet Application</h1>
+<h1>@L["PetApplication"]</h1>
 
 <!-- Main application form for adopting, fostering, or sponsoring a pet -->
 <EditForm Model="application" OnValidSubmit="HandleSubmit">
   <DataAnnotationsValidator />
 
   <div class="form-section">
-    <h3>Personal Information</h3>
+    <h3>@L["PersonalInformation"]</h3>
 
     <!-- Basic user information -->
     <div class="form-group">
-      <label>Full Name</label>
+      <label>@L["FullName"]</label>
       <InputText class="form-control" @bind-Value="application.FullName" />
       <ValidationMessage For="@(() => application.FullName)" />
     </div>
 
     <div class="form-group">
-      <label>Email</label>
+      <label>@L["Email"]</label>
       <InputText class="form-control" @bind-Value="application.Email" />
       <ValidationMessage For="@(() => application.Email)" />
     </div>
 
     <div class="form-group">
-      <label>Phone Number</label>
+      <label>@L["PhoneNumber"]</label>
       <InputText class="form-control" @bind-Value="application.PhoneNumber" />
       <ValidationMessage For="@(() => application.PhoneNumber)" />
     </div>
 
     <div class="form-group">
-      <label>Address</label>
+      <label>@L["Address"]</label>
       <InputText class="form-control" @bind-Value="application.Address" />
       <ValidationMessage For="@(() => application.Address)" />
     </div>
   </div>
 
   <div class="form-section">
-    <h3>How Would You Like To Help?</h3>
+    <h3>@L["HowWouldYouLikeToHelp"]</h3>
 
     <!-- Radio selection determines which section appears below -->
     <InputRadioGroup @bind-Value="application.HelpType">
@@ -54,19 +56,19 @@
 
       <div>
         <label>
-          <InputRadio Value='@("Adopt")' /> Adopt
+          <InputRadio Value='@("Adopt")' /> @L["Adopt"]
         </label>
       </div>
 
       <div>
         <label>
-          <InputRadio Value='@("Foster")' /> Foster
+          <InputRadio Value='@("Foster")' /> @L["Foster"]
         </label>
       </div>
 
       <div>
         <label>
-          <InputRadio Value='@("Sponsor")' /> Sponsor
+          <InputRadio Value='@("Sponsor")' /> @L["Sponsor"]
         </label>
       </div>
 
@@ -77,20 +79,20 @@
   {
     <!-- Conditional section for adoption-specific questions -->
     <div class="form-section">
-      <h3>Adoption Questions</h3>
+      <h3>@L["AdoptionQuestions"]</h3>
 
       <div class="form-group">
-        <label>Do you own or rent?</label>
+        <label>@L["DoYouOwnOrRent"]</label>
         <InputText class="form-control" @bind-Value="application.HousingStatus" />
       </div>
 
       <div class="form-group">
-        <label>Do you have other pets?</label>
+        <label>@L["DoYouHaveOtherPets"]</label>
         <InputText class="form-control" @bind-Value="application.OtherPets" />
       </div>
 
       <div class="form-group">
-        <label>Why do you want to adopt?</label>
+        <label>@L["WhyDoYouWantToAdopt"]</label>
         <InputTextArea class="form-control" @bind-Value="application.Reason" />
       </div>
     </div>
@@ -99,15 +101,15 @@
   {
     <!-- Conditional section for fostering questions -->
     <div class="form-section">
-      <h3>Foster Questions</h3>
+      <h3>@L["FosterQuestions"]</h3>
 
       <div class="form-group">
-        <label>How long can you foster?</label>
+        <label>@L["HowLongCanYouFoster"]</label>
         <InputText class="form-control" @bind-Value="application.FosterLength" />
       </div>
 
       <div class="form-group">
-        <label>Experience with animals?</label>
+        <label>@L["ExperienceWithAnimals"]</label>
         <InputTextArea class="form-control" @bind-Value="application.Experience" />
       </div>
     </div>
@@ -116,15 +118,15 @@
   {
     <!-- Section for sponsorship questions -->
     <div class="form-section">
-      <h3>Sponsorship Questions</h3>
+      <h3>@L["SponsorshipQuestions"]</h3>
 
       <div class="form-group">
-        <label>Monthly contribution</label>
+        <label>@L["MonthlyContribution"]</label>
         <InputNumber class="form-control" @bind-Value="application.MonthlyAmount" />
       </div>
 
       <div class="form-group">
-        <label>Why do you want to sponsor?</label>
+        <label>@L["WhyDoYouWantToSponsor"]</label>
         <InputTextArea class="form-control" @bind-Value="application.Reason" />
       </div>
     </div>
@@ -137,12 +139,12 @@
     <!-- Required confirmation checkbox -->
     <label>
       <InputCheckbox @bind-Value="application.AgreeToTerms" />
-      I confirm all information is accurate
+      @L["ConfirmAccurate"]
     </label>
     <ValidationMessage For="@(() => application.AgreeToTerms)" />
   </div>
 
-  <button type="submit" class="btn btn-primary" disabled="@submitted">Submit</button>
+  <button type="submit" class="btn btn-primary" disabled="@submitted">@L["Submit"]</button>
 
 </EditForm>
 
@@ -157,6 +159,7 @@
 
   protected override void OnInitialized()
   {
+    L.LanguageChanged += HandleLanguageChanged;
     // Get the query parameters from the URL
     var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
     var queryParams = QueryHelpers.ParseQuery(uri.Query);
@@ -168,7 +171,7 @@
     }
     else
     {
-      petName = "No pet name provided";
+      petName = L["NoPetNameProvided"];
     }
   }
   private async Task HandleSubmit()
@@ -185,5 +188,12 @@
     // Redirect to the Thank You page with applicationId
     
     Navigation.NavigateTo($"/thankyou?id={application.Id}");
+  }
+
+  private void HandleLanguageChanged() => InvokeAsync(StateHasChanged);
+
+  public void Dispose()
+  {
+    L.LanguageChanged -= HandleLanguageChanged;
   }
 }

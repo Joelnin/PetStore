@@ -1,0 +1,351 @@
+@page "/donate"
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.WebUtilities
+@rendermode InteractiveServer
+@inject PetStore.Services.LocalizationService L
+@inject NavigationManager Navigation
+@implements IDisposable
+
+<PageTitle>@L["DonatePageTitle"]</PageTitle>
+
+<div class="container donate-page py-5">
+    <div class="row justify-content-center">
+        <div class="col-xl-9">
+            <div class="donate-shell">
+                <div class="row g-0">
+                    <div class="col-lg-5 donate-aside">
+                        <div class="donate-copy">
+                            <p class="eyebrow">@L["SupportOurMission"]</p>
+                            <h1>@DonateHeadingText</h1>
+                            <p class="lead-text">@L["KindlyContactUsOn"]</p>
+                            <a class="phone-link" href="tel:+2348012345678">+234 801 234 5678</a>
+                            <p class="support-note">@DonateSupportText</p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-7 donate-form-panel">
+                        @if (submitSuccess)
+                        {
+                            <div class="alert alert-success donate-alert" role="alert">@L["DonateSuccess"]</div>
+                        }
+
+                        <EditForm Model="form" OnValidSubmit="HandleSubmit">
+                            <DataAnnotationsValidator />
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="firstName" class="form-label">@L["FirstName"]</label>
+                                    <InputText id="firstName" class="form-control" @bind-Value="form.FirstName" />
+                                    <ValidationMessage For="@(() => form.FirstName)" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="lastName" class="form-label">@L["LastName"]</label>
+                                    <InputText id="lastName" class="form-control" @bind-Value="form.LastName" />
+                                    <ValidationMessage For="@(() => form.LastName)" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="country" class="form-label">@L["Country"]</label>
+                                    <InputSelect id="country" class="form-select" @bind-Value="form.Country" @bind-Value:after="UpdateCountryCode">
+                                        <option value="">@L["SelectCountry"]</option>
+                                        @foreach (var country in countries)
+                                        {
+                                            <option value="@country.Key">@country.Key</option>
+                                        }
+                                    </InputSelect>
+                                    <ValidationMessage For="@(() => form.Country)" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="phoneNumber" class="form-label">@L["PhoneNumber"]</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">+@form.CountryCode</span>
+                                        <InputText id="phoneNumber" class="form-control" @bind-Value="form.PhoneNumber" />
+                                    </div>
+                                    <ValidationMessage For="@(() => form.PhoneNumber)" />
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="email" class="form-label">@L["Email"]</label>
+                                    <InputText id="email" class="form-control" type="email" @bind-Value="form.Email" />
+                                    <ValidationMessage For="@(() => form.Email)" />
+                                </div>
+
+                                <div class="col-12">
+                                    <button type="submit" class="btn donate-submit-btn">@L["Submit"]</button>
+                                </div>
+                            </div>
+                        </EditForm>
+
+                        <div class="social-block">
+                            <p class="social-title">@L["ReachUsThrough"]</p>
+                            <div class="social-links">
+                                <a href="https://www.facebook.com" target="_blank" class="social-link" title="Facebook">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="https://www.instagram.com" target="_blank" class="social-link" title="Instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="https://www.linkedin.com" target="_blank" class="social-link" title="LinkedIn">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .donate-page {
+        color: #2f241d;
+    }
+
+    .donate-shell {
+        overflow: hidden;
+        border-radius: 28px;
+        background: linear-gradient(135deg, #fff7ed 0%, #ffffff 55%, #fff1e2 100%);
+        box-shadow: 0 24px 60px rgba(102, 61, 21, 0.12);
+    }
+
+    .donate-aside {
+        background: linear-gradient(160deg, #f28c28 0%, #dc6b10 100%);
+        color: #fffaf5;
+        display: flex;
+        align-items: center;
+    }
+
+    .donate-copy {
+        padding: 3rem 2.25rem;
+    }
+
+    .eyebrow {
+        margin-bottom: 0.75rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        opacity: 0.9;
+    }
+
+    .donate-copy h1 {
+        margin-bottom: 1rem;
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 800;
+        line-height: 1.05;
+    }
+
+    .lead-text,
+    .support-note {
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+
+    .phone-link {
+        display: inline-block;
+        margin: 0.2rem 0 1.5rem;
+        color: #ffffff;
+        font-size: 1.35rem;
+        font-weight: 800;
+        text-decoration: none;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.45);
+    }
+
+    .phone-link:hover {
+        color: #fff4d9;
+        border-bottom-color: #fff4d9;
+    }
+
+    .donate-form-panel {
+        padding: 2.5rem 2.25rem;
+        background-color: rgba(255, 255, 255, 0.88);
+    }
+
+    .donate-alert {
+        margin-bottom: 1.25rem;
+        border: 0;
+        background-color: #ecfdf3;
+        color: #166534;
+    }
+
+    .form-label {
+        color: #5b4330;
+        font-weight: 600;
+    }
+
+    .form-control,
+    .form-select,
+    .input-group-text {
+        min-height: 48px;
+        border-radius: 14px;
+        border-color: #efd6bf;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #f28c28;
+        box-shadow: 0 0 0 0.2rem rgba(242, 140, 40, 0.18);
+    }
+
+    .input-group-text {
+        background-color: #fff4e8;
+        color: #7a4a19;
+        font-weight: 700;
+    }
+
+    .donate-submit-btn {
+        min-width: 170px;
+        padding: 0.7rem 1.35rem;
+        border: 0;
+        border-radius: 999px;
+        background: #f28c28;
+        color: #fff;
+        font-weight: 700;
+        transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+        box-shadow: 0 12px 25px rgba(242, 140, 40, 0.28);
+    }
+
+    .donate-submit-btn:hover {
+        background: #d97706;
+        transform: translateY(-2px);
+    }
+
+    .social-block {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #f0dcc8;
+    }
+
+    .social-title {
+        margin-bottom: 0.9rem;
+        font-weight: 600;
+        color: #6f4d33;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 0.9rem;
+    }
+
+    .social-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background-color: #fff1e2;
+        color: #9a5c20;
+        text-decoration: none;
+        transition: all 0.25s ease;
+    }
+
+    .social-link:hover {
+        background-color: #f28c28;
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+
+    ::deep .validation-message {
+        margin-top: 0.35rem;
+        font-size: 0.9rem;
+        color: #b42318;
+    }
+
+    @@media (max-width: 991.98px) {
+        .donate-copy,
+        .donate-form-panel {
+            padding: 2rem 1.4rem;
+        }
+    }
+</style>
+
+@code {
+    public class DonateForm
+    {
+        [Required(ErrorMessage = "First name is required")]
+        public string FirstName { get; set; } = "";
+
+        [Required(ErrorMessage = "Last name is required")]
+        public string LastName { get; set; } = "";
+
+        [Required(ErrorMessage = "Country is required")]
+        public string Country { get; set; } = "";
+
+        public string CountryCode { get; set; } = "";
+
+        [Required(ErrorMessage = "Phone number is required")]
+        public string PhoneNumber { get; set; } = "";
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Please enter a valid email address")]
+        public string Email { get; set; } = "";
+    }
+
+    private DonateForm form = new();
+    private bool submitSuccess;
+    private string? petName;
+
+    private Dictionary<string, string> countries = new()
+    {
+        { "Canada", "1" },
+        { "Ghana", "233" },
+        { "Kenya", "254" },
+        { "Nigeria", "234" },
+        { "South Africa", "27" },
+        { "United Kingdom", "44" },
+        { "United States", "1" }
+    };
+
+    private void UpdateCountryCode()
+    {
+        if (!string.IsNullOrWhiteSpace(form.Country) && countries.TryGetValue(form.Country, out var code))
+        {
+            form.CountryCode = code;
+        }
+        else
+        {
+            form.CountryCode = "";
+        }
+    }
+
+    private Task HandleSubmit()
+    {
+        submitSuccess = true;
+        form = new DonateForm();
+        return Task.CompletedTask;
+    }
+
+    protected override void OnInitialized()
+    {
+        L.LanguageChanged += HandleLanguageChanged;
+
+        var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
+        var queryParams = QueryHelpers.ParseQuery(uri.Query);
+
+        if (queryParams.TryGetValue("petName", out var name))
+        {
+            petName = name.ToString();
+        }
+    }
+
+    private string DonateHeadingText =>
+        string.IsNullOrWhiteSpace(petName)
+            ? L["DonateHeading"]
+            : $"Support {petName}.";
+
+    private string DonateSupportText =>
+        string.IsNullOrWhiteSpace(petName)
+            ? L["OrFillFormContact"]
+            : $"Or fill out the form so we can contact you about helping {petName}.";
+
+    private void HandleLanguageChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose()
+    {
+        L.LanguageChanged -= HandleLanguageChanged;
+    }
+}

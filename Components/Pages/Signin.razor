@@ -1,11 +1,26 @@
 @page "/signin"
 @rendermode InteractiveServer
+@inject PetStore.Services.LocalizationService L
+@implements IDisposable
 
+<h1>@L["SigninHeading"]</h1>
 
-<h1>Sign In</h1>
-
-<p>Please sign in to help your Pawsitive Friend!</p>
+<p>@L["SigninText"]</p>
 
 <a class="btn btn-primary" href="/login-google">
-  Continue with Google
+  @L["ContinueWithGoogle"]
 </a>
+
+@code {
+  protected override void OnInitialized()
+  {
+    L.LanguageChanged += HandleLanguageChanged;
+  }
+
+  private void HandleLanguageChanged() => InvokeAsync(StateHasChanged);
+
+  public void Dispose()
+  {
+    L.LanguageChanged -= HandleLanguageChanged;
+  }
+}

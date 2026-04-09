@@ -1,42 +1,66 @@
-﻿@using System.Linq
+@using System.Linq
 @using System.Security.Claims
+@using Microsoft.JSInterop
+@implements IDisposable
+@implements IAsyncDisposable
 @inherits LayoutComponentBase
+@inject PetStore.Services.LocalizationService L
+@inject IJSRuntime JS
 
 <div class="page">
   <main>
-    <!-- Top navigation area shown on every page -->
-    <header class="top-row px-4">
-      <div class="top-row-right">
-        
-        <!-- Show different content depending on if the user is signed in -->
-        <AuthorizeView>
-          <Authorized>
-            @{
+    <header class="site-header">
+      <div class="top-strip">
+        <div class="top-strip-inner">
+          <a href="/" class="header-logo-link" aria-label="Pawsitive Friends home">
+            <img src="/favicon.svg" alt="Pawsitive Friends logo" class="header-logo" />
+            <span class="header-brand-text">Pawsitive Friends</span>
+          </a>
 
-              <!-- Get user's first name from info from Google. If it's not available, get the account name. If neither exists, show a default greeting "User" -->
-              var firstName = context.User.FindFirst(ClaimTypes.GivenName)?.Value
-                              ?? context.User.Identity?.Name
-                              ?? "User";
-            }
+          <div class="header-right">
+            <div class="social-cluster" aria-label="Social media links">
+              <a href="https://www.facebook.com" target="_blank" class="social-link" title="Facebook">
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a href="https://www.instagram.com" target="_blank" class="social-link" title="Instagram">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="https://www.linkedin.com" target="_blank" class="social-link" title="LinkedIn">
+                <i class="fab fa-linkedin-in"></i>
+              </a>
+            </div>
 
-            <!-- Personalized greeting for signed-in users -->
-            <span class="user-greeting">
-              Hello @firstName
-            </span>
+            <div class="header-actions">
+              <label class="language-label" for="languageSelect">@L["Language"]</label>
+              <select id="languageSelect" class="language-select" value="@L.CurrentLanguage" @onchange="OnLanguageChanged">
+                <option>English</option>
+                <option>Spanish</option>
+                <option>French</option>
+                <option>Portuguese</option>
+              </select>
 
-            <!-- Sign-out link for authenticated users -->
-            <a class="signin-link" href="/logout">Log Out</a>
-          </Authorized>
+              <AuthorizeView>
+                <Authorized>
+                  @{
+                    var firstName = context.User.FindFirst(ClaimTypes.GivenName)?.Value
+                                    ?? context.User.Identity?.Name
+                                    ?? "User";
+                  }
 
-          <NotAuthorized>
-            <!-- Sign-in link shown when no user is logged in -->
-            <a class="signin-link" href="/signin">Sign In</a>
-          </NotAuthorized>
-        </AuthorizeView>
+                  <span class="user-greeting">@L["Hello"] @firstName</span>
+                  <a class="signin-link" href="/logout">@L["LogOut"]</a>
+                </Authorized>
+
+                <NotAuthorized>
+                  <a class="signin-link" href="/signin">@L["SignIn"]</a>
+                </NotAuthorized>
+              </AuthorizeView>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
 
-    <!-- Main content area where each page is rendered inside the layout -->
     <article class="content px-4">
       @Body
     </article>
@@ -44,4 +68,54 @@
 </div>
 
 @code {
+  private IJSObjectReference? localizationModule;
+
+  protected override void OnInitialized()
+  {
+    L.LanguageChanged += HandleLanguageChanged;
+  }
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    if (firstRender)
+    {
+      localizationModule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/localization.js");
+      var savedLanguage = await localizationModule.InvokeAsync<string?>("getSavedLanguage");
+
+      if (!string.IsNullOrWhiteSpace(savedLanguage))
+      {
+        L.SetLanguage(savedLanguage);
+      }
+    }
+  }
+
+  private async Task OnLanguageChanged(ChangeEventArgs e)
+  {
+    var language = e.Value?.ToString();
+
+    if (!string.IsNullOrWhiteSpace(language))
+    {
+      L.SetLanguage(language);
+
+      if (localizationModule is not null)
+      {
+        await localizationModule.InvokeVoidAsync("saveLanguage", language);
+      }
+    }
+  }
+
+  private void HandleLanguageChanged() => InvokeAsync(StateHasChanged);
+
+  public void Dispose()
+  {
+    L.LanguageChanged -= HandleLanguageChanged;
+  }
+
+  public async ValueTask DisposeAsync()
+  {
+    if (localizationModule is not null)
+    {
+      await localizationModule.DisposeAsync();
+    }
+  }
 }

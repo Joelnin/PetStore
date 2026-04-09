@@ -1,6 +1,21 @@
-﻿@page "/not-found"
+@page "/not-found"
 @layout MainLayout
+@inject PetStore.Services.LocalizationService L
+@implements IDisposable
 
-<!-- This page will show when the page user is looking for is unauthorized or doesn't exist -->
-<h3>Not Found</h3>
-<p>Sorry, the content you are looking for does not exist.</p>
+<h3>@L["NotFound"]</h3>
+<p>@L["NotFoundText"]</p>
+
+@code {
+  protected override void OnInitialized()
+  {
+    L.LanguageChanged += HandleLanguageChanged;
+  }
+
+  private void HandleLanguageChanged() => InvokeAsync(StateHasChanged);
+
+  public void Dispose()
+  {
+    L.LanguageChanged -= HandleLanguageChanged;
+  }
+}

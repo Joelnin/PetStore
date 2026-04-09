@@ -1,0 +1,504 @@
+@page "/volunteer"
+@using System.Collections.Generic
+@using System.ComponentModel.DataAnnotations
+@rendermode InteractiveServer
+@inject PetStore.Services.LocalizationService L
+@implements IDisposable
+
+<PageTitle>@L["VolunteerPageTitle"]</PageTitle>
+
+<div class="container volunteer-page py-5">
+    <div class="row justify-content-center">
+        <div class="col-xl-10">
+            <div class="volunteer-shell">
+                <div class="row g-0">
+                    <div class="col-lg-5 volunteer-aside">
+                        <div class="volunteer-copy">
+                            <p class="eyebrow">@L["JoinTheCrew"]</p>
+                            <h1>@L["VolunteerHeading"]</h1>
+                            <p class="lead-text">@L["VolunteerLead"]</p>
+                            <p class="support-note">@L["VolunteerSupport"]</p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-7 volunteer-form-panel">
+                        @if (submitSuccess)
+                        {
+                            <div class="alert alert-success volunteer-alert" role="alert">@L["VolunteerSuccess"]</div>
+                        }
+
+                        <EditForm Model="form" OnValidSubmit="HandleSubmit">
+                            <DataAnnotationsValidator />
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="firstName" class="form-label">@L["FirstName"]</label>
+                                    <InputText id="firstName" class="form-control" @bind-Value="form.FirstName" placeholder="Enter your first name" />
+                                    <ValidationMessage For="@(() => form.FirstName)" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="lastName" class="form-label">@L["LastName"]</label>
+                                    <InputText id="lastName" class="form-control" @bind-Value="form.LastName" placeholder="Enter your last name" />
+                                    <ValidationMessage For="@(() => form.LastName)" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="country" class="form-label">@L["Country"]</label>
+                                    <InputSelect id="country" class="form-select" @bind-Value="form.Country" @bind-Value:after="UpdateCountryCode">
+                                        <option value="">@L["SelectCountry"]</option>
+                                        @foreach (var country in countries)
+                                        {
+                                            <option value="@country.Key">@country.Key</option>
+                                        }
+                                    </InputSelect>
+                                    <ValidationMessage For="@(() => form.Country)" />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="contact" class="form-label">@L["PhoneNumber"]</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">+@form.CountryCode</span>
+                                        <InputText id="contact" class="form-control" @bind-Value="form.PhoneNumber" placeholder="Enter your phone number" />
+                                    </div>
+                                    <ValidationMessage For="@(() => form.PhoneNumber)" />
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="email" class="form-label">@L["Email"]</label>
+                                    <InputText id="email" class="form-control" type="email" @bind-Value="form.Email" placeholder="Enter your email address" />
+                                    <ValidationMessage For="@(() => form.Email)" />
+                                </div>
+
+                                <div class="col-12">
+                                    <button type="submit" class="btn volunteer-submit-btn">@L["SubmitApplication"]</button>
+                                </div>
+                            </div>
+                        </EditForm>
+
+                        <div class="social-block">
+                            <p class="social-title">@L["ReachUsThrough"]</p>
+                            <div class="social-links">
+                                <a href="https://www.linkedin.com" target="_blank" class="social-link" title="LinkedIn">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                                <a href="https://www.facebook.com" target="_blank" class="social-link" title="Facebook">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="https://www.instagram.com" target="_blank" class="social-link" title="Instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .volunteer-page {
+        color: #2f241d;
+    }
+
+    .volunteer-shell {
+        overflow: hidden;
+        border-radius: 28px;
+        background: linear-gradient(135deg, #fff7ed 0%, #ffffff 55%, #fff1e2 100%);
+        box-shadow: 0 24px 60px rgba(102, 61, 21, 0.12);
+    }
+
+    .volunteer-aside {
+        display: flex;
+        align-items: center;
+        background: linear-gradient(160deg, #f28c28 0%, #dc6b10 100%);
+        color: #fffaf5;
+    }
+
+    .volunteer-copy {
+        padding: 3rem 2.25rem;
+    }
+
+    .eyebrow {
+        margin-bottom: 0.75rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        opacity: 0.9;
+    }
+
+    .volunteer-copy h1 {
+        margin-bottom: 1rem;
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 800;
+        line-height: 1.05;
+    }
+
+    .lead-text,
+    .support-note {
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+
+    .volunteer-form-panel {
+        padding: 2.5rem 2.25rem;
+        background-color: rgba(255, 255, 255, 0.88);
+    }
+
+    .volunteer-alert {
+        margin-bottom: 1.25rem;
+        border: 0;
+        background-color: #ecfdf3;
+        color: #166534;
+    }
+
+    .form-label {
+        color: #5b4330;
+        font-weight: 600;
+    }
+
+    .form-control,
+    .form-select,
+    .input-group-text {
+        min-height: 48px;
+        border-radius: 14px;
+        border-color: #efd6bf;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #f28c28;
+        box-shadow: 0 0 0 0.2rem rgba(242, 140, 40, 0.18);
+    }
+
+    .input-group-text {
+        background-color: #fff4e8;
+        color: #7a4a19;
+        font-weight: 700;
+    }
+
+    .volunteer-submit-btn {
+        min-width: 185px;
+        padding: 0.7rem 1.35rem;
+        border: 0;
+        border-radius: 999px;
+        background: #f28c28;
+        color: #fff;
+        font-weight: 700;
+        transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+        box-shadow: 0 12px 25px rgba(242, 140, 40, 0.28);
+    }
+
+    .volunteer-submit-btn:hover {
+        background: #d97706;
+        transform: translateY(-2px);
+    }
+
+    .social-block {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #f0dcc8;
+    }
+
+    .social-title {
+        margin-bottom: 0.9rem;
+        font-weight: 600;
+        color: #6f4d33;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 0.9rem;
+    }
+
+    .social-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background-color: #fff1e2;
+        color: #9a5c20;
+        text-decoration: none;
+        transition: all 0.25s ease;
+    }
+
+    .social-link:hover {
+        background-color: #f28c28;
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+
+    ::deep .validation-message {
+        margin-top: 0.35rem;
+        font-size: 0.9rem;
+        color: #b42318;
+    }
+
+    @@media (max-width: 991.98px) {
+        .volunteer-copy,
+        .volunteer-form-panel {
+            padding: 2rem 1.4rem;
+        }
+    }
+</style>
+
+@code {
+    public class VolunteerForm
+    {
+        [Required(ErrorMessage = "First name is required")]
+        public string FirstName { get; set; } = "";
+
+        [Required(ErrorMessage = "Last name is required")]
+        public string LastName { get; set; } = "";
+
+        [Required(ErrorMessage = "Country is required")]
+        public string Country { get; set; } = "";
+
+        public string CountryCode { get; set; } = "";
+
+        [Required(ErrorMessage = "Phone number is required")]
+        public string PhoneNumber { get; set; } = "";
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Please enter a valid email address")]
+        public string Email { get; set; } = "";
+    }
+
+    private VolunteerForm form = new();
+    private bool submitSuccess = false;
+
+    private Dictionary<string, string> countries = new()
+    {
+        { "Afghanistan", "93" },
+        { "Albania", "355" },
+        { "Algeria", "213" },
+        { "Andorra", "376" },
+        { "Angola", "244" },
+        { "Argentina", "54" },
+        { "Armenia", "374" },
+        { "Australia", "61" },
+        { "Austria", "43" },
+        { "Azerbaijan", "994" },
+        { "Bahamas", "1" },
+        { "Bahrain", "973" },
+        { "Bangladesh", "880" },
+        { "Barbados", "1" },
+        { "Belarus", "375" },
+        { "Belgium", "32" },
+        { "Belize", "501" },
+        { "Benin", "229" },
+        { "Bhutan", "975" },
+        { "Bolivia", "591" },
+        { "Bosnia and Herzegovina", "387" },
+        { "Botswana", "267" },
+        { "Brazil", "55" },
+        { "Brunei", "673" },
+        { "Bulgaria", "359" },
+        { "Burkina Faso", "226" },
+        { "Burundi", "257" },
+        { "Cambodia", "855" },
+        { "Cameroon", "237" },
+        { "Canada", "1" },
+        { "Cape Verde", "238" },
+        { "Central African Republic", "236" },
+        { "Chad", "235" },
+        { "Chile", "56" },
+        { "China", "86" },
+        { "Colombia", "57" },
+        { "Comoros", "269" },
+        { "Congo", "242" },
+        { "Costa Rica", "506" },
+        { "Croatia", "385" },
+        { "Cuba", "53" },
+        { "Cyprus", "357" },
+        { "Czech Republic", "420" },
+        { "Denmark", "45" },
+        { "Djibouti", "253" },
+        { "Dominica", "1" },
+        { "Dominican Republic", "1" },
+        { "Ecuador", "593" },
+        { "Egypt", "20" },
+        { "El Salvador", "503" },
+        { "Equatorial Guinea", "240" },
+        { "Eritrea", "291" },
+        { "Estonia", "372" },
+        { "Eswatini", "268" },
+        { "Ethiopia", "251" },
+        { "Fiji", "679" },
+        { "Finland", "358" },
+        { "France", "33" },
+        { "Gabon", "241" },
+        { "Gambia", "220" },
+        { "Georgia", "995" },
+        { "Germany", "49" },
+        { "Ghana", "233" },
+        { "Greece", "30" },
+        { "Grenada", "1" },
+        { "Guatemala", "502" },
+        { "Guinea", "224" },
+        { "Guinea-Bissau", "245" },
+        { "Guyana", "592" },
+        { "Haiti", "509" },
+        { "Honduras", "504" },
+        { "Hong Kong", "852" },
+        { "Hungary", "36" },
+        { "Iceland", "354" },
+        { "India", "91" },
+        { "Indonesia", "62" },
+        { "Iran", "98" },
+        { "Iraq", "964" },
+        { "Ireland", "353" },
+        { "Israel", "972" },
+        { "Italy", "39" },
+        { "Jamaica", "1" },
+        { "Japan", "81" },
+        { "Jordan", "962" },
+        { "Kazakhstan", "7" },
+        { "Kenya", "254" },
+        { "Kiribati", "686" },
+        { "Kosovo", "383" },
+        { "Kuwait", "965" },
+        { "Kyrgyzstan", "996" },
+        { "Laos", "856" },
+        { "Latvia", "371" },
+        { "Lebanon", "961" },
+        { "Lesotho", "266" },
+        { "Liberia", "231" },
+        { "Libya", "218" },
+        { "Liechtenstein", "423" },
+        { "Lithuania", "370" },
+        { "Luxembourg", "352" },
+        { "Macao", "853" },
+        { "Madagascar", "261" },
+        { "Malawi", "265" },
+        { "Malaysia", "60" },
+        { "Maldives", "960" },
+        { "Mali", "223" },
+        { "Malta", "356" },
+        { "Marshall Islands", "692" },
+        { "Mauritania", "222" },
+        { "Mauritius", "230" },
+        { "Mexico", "52" },
+        { "Micronesia", "691" },
+        { "Moldova", "373" },
+        { "Monaco", "377" },
+        { "Mongolia", "976" },
+        { "Montenegro", "382" },
+        { "Morocco", "212" },
+        { "Mozambique", "258" },
+        { "Myanmar", "95" },
+        { "Namibia", "264" },
+        { "Nauru", "674" },
+        { "Nepal", "977" },
+        { "Netherlands", "31" },
+        { "New Zealand", "64" },
+        { "Nicaragua", "505" },
+        { "Niger", "227" },
+        { "Nigeria", "234" },
+        { "North Korea", "850" },
+        { "North Macedonia", "389" },
+        { "Norway", "47" },
+        { "Oman", "968" },
+        { "Pakistan", "92" },
+        { "Palau", "680" },
+        { "Palestine", "970" },
+        { "Panama", "507" },
+        { "Papua New Guinea", "675" },
+        { "Paraguay", "595" },
+        { "Peru", "51" },
+        { "Philippines", "63" },
+        { "Poland", "48" },
+        { "Portugal", "351" },
+        { "Qatar", "974" },
+        { "Romania", "40" },
+        { "Russia", "7" },
+        { "Rwanda", "250" },
+        { "Saint Kitts and Nevis", "1" },
+        { "Saint Lucia", "1" },
+        { "Saint Vincent and the Grenadines", "1" },
+        { "Samoa", "685" },
+        { "San Marino", "378" },
+        { "Sao Tome and Principe", "239" },
+        { "Saudi Arabia", "966" },
+        { "Senegal", "221" },
+        { "Serbia", "381" },
+        { "Seychelles", "248" },
+        { "Sierra Leone", "232" },
+        { "Singapore", "65" },
+        { "Slovakia", "421" },
+        { "Slovenia", "386" },
+        { "Solomon Islands", "677" },
+        { "Somalia", "252" },
+        { "South Africa", "27" },
+        { "South Korea", "82" },
+        { "South Sudan", "211" },
+        { "Spain", "34" },
+        { "Sri Lanka", "94" },
+        { "Sudan", "249" },
+        { "Suriname", "597" },
+        { "Sweden", "46" },
+        { "Switzerland", "41" },
+        { "Syria", "963" },
+        { "Taiwan", "886" },
+        { "Tajikistan", "992" },
+        { "Tanzania", "255" },
+        { "Thailand", "66" },
+        { "Timor-Leste", "670" },
+        { "Togo", "228" },
+        { "Tonga", "676" },
+        { "Trinidad and Tobago", "1" },
+        { "Tunisia", "216" },
+        { "Turkey", "90" },
+        { "Turkmenistan", "993" },
+        { "Tuvalu", "688" },
+        { "Uganda", "256" },
+        { "Ukraine", "380" },
+        { "United Arab Emirates", "971" },
+        { "United Kingdom", "44" },
+        { "United States", "1" },
+        { "Uruguay", "598" },
+        { "Uzbekistan", "998" },
+        { "Vanuatu", "678" },
+        { "Vatican City", "379" },
+        { "Venezuela", "58" },
+        { "Vietnam", "84" },
+        { "Yemen", "967" },
+        { "Zambia", "260" },
+        { "Zimbabwe", "263" }
+    };
+
+    private void UpdateCountryCode()
+    {
+        if (!string.IsNullOrEmpty(form.Country) && countries.TryGetValue(form.Country, out var code))
+        {
+            form.CountryCode = code;
+        }
+        else
+        {
+            form.CountryCode = "";
+        }
+    }
+
+    private Task HandleSubmit()
+    {
+        submitSuccess = true;
+        form = new VolunteerForm();
+        return Task.CompletedTask;
+    }
+
+    protected override void OnInitialized()
+    {
+        L.LanguageChanged += HandleLanguageChanged;
+    }
+
+    private void HandleLanguageChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose()
+    {
+        L.LanguageChanged -= HandleLanguageChanged;
+    }
+}

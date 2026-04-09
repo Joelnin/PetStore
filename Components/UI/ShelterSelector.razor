@@ -3,13 +3,15 @@
 @using PetStore.Services
 @rendermode InteractiveServer
 @inject PetService PetService
+@inject LocalizationService L
+@implements IDisposable
 
 <div class="shelter-selector-container">
-    <p class="selector-label">FIND YOUR NEAREST SHELTER</p>
+    <p class="selector-label">@L["FindNearestShelter"]</p>
     
     <select @ref="shelterSelectRef" @bind="SelectedShelterId" @bind:after="NotifyChange"
             class="form-select custom-select">
-        <option value="">-- Choose a location --</option>
+        <option value="">@L["ChooseLocation"]</option>
         @foreach (var shelter in Shelters)
         {
             <option value="@shelter.Id">@shelter.Name</option>
@@ -24,7 +26,7 @@
         </button>
 
         <button class="btn btn-secondary-outline" @onclick="ViewAllPets">
-            See all pets <i class="bi bi-arrow-right-short"></i>
+            @L["SeeAllPets"] <i class="bi bi-arrow-right-short"></i>
         </button>
     </div>
 </div>
@@ -54,10 +56,10 @@
 
     private string GetButtonText()
     {
-        if (string.IsNullOrEmpty(SelectedShelterId)) return "Select a shelter"; 
+        if (string.IsNullOrEmpty(SelectedShelterId)) return L["SelectAShelter"];
         
-        var name = Shelters.FirstOrDefault(s => s.Id == SelectedShelterId)?.Name ?? "Shelter"; 
-        return $"Go to {name}";
+        var name = Shelters.FirstOrDefault(s => s.Id == SelectedShelterId)?.Name ?? L["Shelters"];
+        return L.Format("GoToShelter", name);
     }
 
     private void GoToShelter()
@@ -70,4 +72,16 @@
     }
 
     private void ViewAllPets() => Nav.NavigateTo("/pets"); 
+
+    protected override void OnInitialized()
+    {
+        L.LanguageChanged += HandleLanguageChanged;
+    }
+
+    private void HandleLanguageChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose()
+    {
+        L.LanguageChanged -= HandleLanguageChanged;
+    }
 }

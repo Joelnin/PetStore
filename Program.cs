@@ -84,6 +84,7 @@ builder.Services.AddRazorComponents()
 
 // Register application services
 builder.Services.AddScoped<PetService>();
+builder.Services.AddScoped<LocalizationService>();
 
 // Enable cascading authentication state for components
 builder.Services.AddCascadingAuthenticationState();

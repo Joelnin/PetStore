@@ -6,15 +6,17 @@
 @using PetStore.Services
 @inject PetService PetService
 @inject NavigationManager NavManager
+@inject LocalizationService L
+@implements IDisposable
 
-<PageTitle>Pets</PageTitle>
+<PageTitle>@L["PetsPageTitle"]</PageTitle>
 
 <!-- This page is for viewing pets in the system -->
 <h1>@PageTitleText</h1>
 
 <!-- Filter links for viewing pets by category -->
 <div class="pet-filters">
-  <a href="/pets">All</a>
+  <a href="/pets">@L["All"]</a>
 
   @foreach (var t in availableTypes)
   {
@@ -29,7 +31,7 @@
   @if (filteredPets.Count == 0)
   {
     <!-- Display message if no pets match the filter -->
-    <p>No pets found in this category.</p>
+    <p>@L["NoPetsInCategory"]</p>
   }
   else
   {
@@ -68,21 +70,21 @@
       }
 
       <p>
-        <strong>Age: </strong>
+        <strong>@L["Age"]: </strong>
         @if (age < 1)
         {
-          <span>Less than a year old</span>
+          <span>@L["LessThanYearOld"]</span>
         }
         else
         {
-          <span>@age @(age == 1 ? "year" : "years") old</span>
+          <span>@(age == 1 ? L.Format("YearOld", age) : L.Format("YearsOld", age))</span>
         }
       </p>
 
-      <p><strong>Breed: </strong>@selectedPet.Breed</p>
+      <p><strong>@L["Breed"]: </strong>@selectedPet.Breed</p>
 
       <p>
-        <strong>Energy: </strong>
+        <strong>@L["Energy"]: </strong>
         @for (int i = 1; i <= 5; i++)
         {
           if (i <= selectedPet.Energy)
@@ -98,11 +100,11 @@
         }
       </p>
 
-      <p><strong>Description: </strong>@selectedPet.Description</p>
+      <p><strong>@L["Description"]: </strong>@selectedPet.Description</p>
 
-      <!-- Application button with pet name -->
-      <a href="/application?petName=@selectedPet.Name" class="apply-button">
-          Help @selectedPet.Name
+      <!-- Donate button with pet name -->
+      <a href="/donate?petName=@selectedPet.Name" class="apply-button">
+          @L.Format("HelpPet", selectedPet.Name)
       </a>
     </div>
   </div>
@@ -126,7 +128,7 @@
   // Dynamically updates page title based on selected filter
   private string PageTitleText =>
       string.IsNullOrWhiteSpace(type)
-          ? "Pets"
+          ? L["PetsPageTitle"]
           : mayus(type);
 
   // Capitalizes the first letter of a string for display purposes.
@@ -166,5 +168,17 @@
     {
       filteredPets = PetService.GetPetsByCategory(type);
     }
+  }
+
+  protected override void OnInitialized()
+  {
+    L.LanguageChanged += HandleLanguageChanged;
+  }
+
+  private void HandleLanguageChanged() => InvokeAsync(StateHasChanged);
+
+  public void Dispose()
+  {
+    L.LanguageChanged -= HandleLanguageChanged;
   }
 }

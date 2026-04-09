@@ -1,26 +1,25 @@
-﻿@page "/"
+@page "/"
 @using PetStore.Services
 @inject NavigationManager NavManager
 @inject IJSRuntime JSRuntime
-@implements IAsyncDisposable
 @inject PetService PetService
+@inject LocalizationService L
+@implements IAsyncDisposable
+@implements IDisposable
 
-<PageTitle>Pawsitive Friends | Home</PageTitle>
+<PageTitle>@L["HomeTitle"]</PageTitle>
 
 <div class="container-centered">
     <div class="row align-items-center hero-split">
-        @* Find a Shelter *@
         <div class="col-lg-6 hero-text-section">
-            <h1 class="display-4 fw-bold">Search to find your <span class="text-highlight">new best friend.</span></h1>
-            <p class="lead mb-4">Connecting loving families with pets in need. Start by selecting a shelter near you.
-            </p>
-            
+            <h1 class="display-4 fw-bold">@L["HomeHeroTitlePrefix"] <span class="text-highlight">@L["HomeHeroTitleHighlight"]</span></h1>
+            <p class="lead mb-4">@L["HomeHeroDescription"]</p>
+
             <div class="selector-wrapper">
                 <ShelterSelector Shelters="allShelters" OnShelterSelected="HandleShelterSelection" />
             </div>
         </div>
 
-        @* Hero *@
         <div class="col-lg-6 d-none d-lg-block">
             <div class="hero-image-container">
                 <img src="images/heroes/default-hero-home.webp" alt="Pawsitive Friends Hero"
@@ -33,16 +32,16 @@
 <section class="container-centered">
     <div class="row g-4">
         <div class="col-md-4">
-            <ActionCard Title="Adopt" Description="Find your perfect match and give a pet a forever home."
-                        LinkText="View Pets" TargetUrl="/pets" />
+            <ActionCard Title="@L["Adopt"]" Description="@L["AdoptCardDescription"]"
+                        LinkText="@L["ViewPets"]" TargetUrl="/pets" />
         </div>
         <div class="col-md-4">
-            <ActionCard Title="Donate" Description="Support our mission with food, medicine, and shelter."
-                        LinkText="Give Today" TargetUrl="/donate" />
+            <ActionCard Title="@L["Donate"]" Description="@L["DonateCardDescription"]"
+                        LinkText="@L["GiveToday"]" TargetUrl="/donate" />
         </div>
         <div class="col-md-4">
-            <ActionCard Title="Volunteer" Description="Share your time and love with animals in need."
-                        LinkText="Join Us" TargetUrl="/volunteer" />
+            <ActionCard Title="@L["Volunteer"]" Description="@L["VolunteerCardDescription"]"
+                        LinkText="@L["JoinUs"]" TargetUrl="/volunteer" />
         </div>
     </div>
 </section>
@@ -51,7 +50,7 @@
 {
     <div class="container-centered mt-5">
         <div class="results-area p-4 rounded-3 bg-white shadow-sm border-start border-primary border-4">
-            <p class="mb-0">Showing pets for shelter ID: <strong>@selectedShelterId</strong></p>
+            <p class="mb-0">@L["ShowingPetsForShelter"] <strong>@selectedShelterId</strong></p>
         </div>
     </div>
 }
@@ -59,25 +58,82 @@
     <div class="row align-items-center">
         <div class="col-lg-6 mb-5 mb-lg-0">
             <div class="impact-image-container">
-                <img src="images/banner/our-mission.webp" alt="Our Mission" class="impact-img-3d" />
+                <img src="images/banner/our-mission.webp" alt="@L["OurMission"]" class="impact-img-3d" />
             </div>
         </div>
 
         <div class="col-lg-6 ps-lg-5 mission-text">
-            <h2 class="section-title">Our Mission</h2>
-            <p class="section-description">
-                Every animal deserves a safe place to call home. We partner with local shelters
-                to provide care and find forever families, ensuring every tail finds its happy ending.
-            </p>
-            
+            <h2 class="section-title">@L["OurMission"]</h2>
+            <p class="section-description">@L["MissionDescription"]</p>
+
             <GlobalStats />
         </div>
     </div>
 </section>
 
+<footer class="home-footer">
+    <div class="container-centered footer-shell">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <h3 class="footer-title">Pawsitive Friends</h3>
+                <p class="footer-copy">@L["FooterBrandDescription"]</p>
+                <div class="footer-socials">
+                    <a href="https://www.facebook.com" target="_blank" class="footer-social-link" title="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com" target="_blank" class="footer-social-link" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.linkedin.com" target="_blank" class="footer-social-link" title="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-2">
+                <h4 class="footer-heading">@L["Links"]</h4>
+                <nav class="footer-links">
+                    <a href="/">@GetHomeLabel()</a>
+                    <a href="/about">@L["About"]</a>
+                    <a href="/pets">@L["Pets"]</a>
+                    <a href="/donate">@L["Donate"]</a>
+                    <a href="/volunteer">@L["Volunteer"]</a>
+                </nav>
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+                <h4 class="footer-heading">@L["ContactUs"]</h4>
+                <div class="footer-contact">
+                    <a href="tel:+2348012345678">+234 801 234 5678</a>
+                    <a href="mailto:hello@pawsitivefriends.org">hello@pawsitivefriends.org</a>
+                    <p>@L["Hours"]</p>
+                </div>
+            </div>
+
+            <div class="col-lg-3">
+                <h4 class="footer-heading">@L["TermsAndConditions"]</h4>
+                <p class="footer-copy small-copy">@L["TermsText"]</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p class="mb-0">&copy; @DateTime.Now.Year Pawsitive Friends. @L["AllRightsReserved"]</p>
+        </div>
+    </div>
+</footer>
+
 @code {
     private ElementReference heroImageRef;
     private IJSObjectReference? scrollModule;
+    private string selectedShelterId = string.Empty;
+    private List<Shelter> allShelters = new();
+    private string selectedId = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        L.LanguageChanged += HandleLanguageChanged;
+        allShelters = PetService.GetAllShelters();
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -88,6 +144,29 @@
         }
     }
 
+    private void HandleShelterSelection(string id)
+    {
+        selectedId = id;
+    }
+
+    private string GetHomeLabel()
+    {
+        return L.CurrentLanguage switch
+        {
+            "Spanish" => "Inicio",
+            "French" => "Accueil",
+            "Portuguese" => "Início",
+            _ => "Home"
+        };
+    }
+
+    private void HandleLanguageChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose()
+    {
+        L.LanguageChanged -= HandleLanguageChanged;
+    }
+
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
         if (scrollModule is not null)
@@ -95,19 +174,5 @@
             await scrollModule.InvokeVoidAsync("disposeHeroScroll");
             await scrollModule.DisposeAsync();
         }
-    }
-    private string selectedShelterId = string.Empty;
-
-    private List<Shelter> allShelters = new();
-    private string selectedId = string.Empty;
-
-    protected override void OnInitialized()
-    {
-        allShelters = PetService.GetAllShelters();
-    }
-
-    private void HandleShelterSelection(string id)
-    {
-        selectedId = id;
     }
 }

@@ -1,18 +1,26 @@
 @page "/about"
 @rendermode InteractiveServer
+@inject PetStore.Services.LocalizationService L
+@implements IDisposable
 
-<PageTitle>About Us</PageTitle>
+<PageTitle>@L["AboutPageTitle"]</PageTitle>
 
-<h1>About Pawsitive Friends</h1>
+<h1>@L["AboutHeading"]</h1>
 
 <p class="about-text">
-  We are a non-profit organization that has partnered with shelters worldwide to bring
-  attention to animals in need of love, care, and a forever home. Our mission is to
-  connect people with shelters and help shine a light on animals waiting for a second chance.
+  @L["AboutText"]
 </p>
 
-
-
 @code {
+  protected override void OnInitialized()
+  {
+    L.LanguageChanged += HandleLanguageChanged;
+  }
 
+  private void HandleLanguageChanged() => InvokeAsync(StateHasChanged);
+
+  public void Dispose()
+  {
+    L.LanguageChanged -= HandleLanguageChanged;
+  }
 }
