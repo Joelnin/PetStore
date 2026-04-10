@@ -18,3 +18,18 @@ usersecrets.json
 # System Files
 .DS_Store
 Thumbs.db
+
+# local dotnet cache
+.dotnet-cli/
+**/.dotnet/
+
+# local dotnet user/cache files
+.dotnet-cli/
+**/.dotnet/
+
+# local verification/build output
+build-verify/
+
+# build artifacts
+**/bin/
+**/obj/
