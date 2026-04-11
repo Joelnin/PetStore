@@ -1,0 +1,100 @@
+@page "/management/applications/helpers/{id:int}"
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = Roles.Admin)]
+
+@using PetStore
+@using PetStore.Models
+@using PetStore.Services
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject PetService PetService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Application Details</PageTitle>
+
+<a href="/management/applications/helpers/">Get back to Pet Specific Applications Management</a>
+
+
+
+@* If application is not found, show message *@
+@if (selectedApplication is null)
+{
+  <p>Application not found.</p>
+}
+else
+{
+  <section class="application-details">
+
+    <!-- Application information section -->
+    <div class="application-info">
+      <h2>Application Information</h2>
+
+
+      <h3>Shelter Information</h3>
+
+      <p><strong>Name of the Pet:</strong> @mayus(selectedApplication.PetName)</p>
+      <p><strong>Shelter's Name:</strong> @mayus(selectedApplication.ShelterName)</p>
+
+      <h3>Contact Information</h3>
+      <p><strong>Name of the Applicant:</strong> @mayus(selectedApplication.FullName)</p>
+      <p><strong>Email:</strong> @selectedApplication.Email</p>
+      <p><strong>Phone:</strong> @selectedApplication.PhoneNumber</p>
+      <p><strong>Address:</strong> @selectedApplication.Address</p>
+
+      <h3>Help Information</h3>
+
+      <p><strong>Type of Help</strong> @selectedApplication.HelpType</p>
+      
+      <!-- Optional fields (only show if they exist) -->
+      @if (!string.IsNullOrWhiteSpace(selectedApplication.HousingStatus))
+      {
+        <p><strong>Housing Status:</strong> @selectedApplication.HousingStatus</p>
+      }
+
+      @if (!string.IsNullOrWhiteSpace(selectedApplication.OtherPets))
+      {
+        <p><strong>Other Pets:</strong> @selectedApplication.OtherPets</p>
+      }
+
+      @if (!string.IsNullOrWhiteSpace(selectedApplication.FosterLength))
+      {
+        <p><strong>Foster Length:</strong> @selectedApplication.FosterLength</p>
+      }
+      
+      @if (!string.IsNullOrWhiteSpace(selectedApplication.Experience))
+      {
+        <p><strong>Experience:</strong> @selectedApplication.Experience</p>
+      }
+
+      <p><strong>Date of creation</strong> @selectedApplication.SubmittedAt.ToString("dd/MM/yyyy HH:mm")</p>
+
+      
+    </div>
+  </section>
+}
+
+@code {
+  // Route parameter used to identify which application to display
+  [Parameter]
+  public required int id { get; set; }
+
+  // Stores the selected application data
+  private ApplicationForm? selectedApplication;
+
+  // Runs whenever the page loads or parameter changes
+  protected override void OnParametersSet()
+  {
+    // Get application using ID from URL
+    selectedApplication = PetService.GetHelperById(id);
+
+  }
+
+  // Capitalizes the first letter of a string for display purposes.
+  string mayus(string text)
+  {
+    if (string.IsNullOrEmpty(text)) return text;
+    return char.ToUpper(text[0]) + text.Substring(1);
+  }
+
+}

@@ -63,12 +63,6 @@
           <InputRadio Value='@("Foster")' /> Foster
         </label>
       </div>
-
-      <div>
-        <label>
-          <InputRadio Value='@("Sponsor")' /> Sponsor
-        </label>
-      </div>
     </InputRadioGroup>
   </div>
 
@@ -108,23 +102,6 @@
       <div class="form-group">
         <label>Experience with animals?</label>
         <InputTextArea class="form-control" @bind-Value="application.Experience" />
-      </div>
-    </div>
-  }
-  else if (application.HelpType == "Sponsor")
-  {
-    <!-- Section for sponsorship questions -->
-    <div class="form-section">
-      <h3>Sponsorship Questions</h3>
-
-      <div class="form-group">
-        <label>Monthly contribution</label>
-        <InputNumber class="form-control" @bind-Value="application.MonthlyAmount" />
-      </div>
-
-      <div class="form-group">
-        <label>Why do you want to sponsor?</label>
-        <InputTextArea class="form-control" @bind-Value="application.Reason" />
       </div>
     </div>
   }
