@@ -1,0 +1,35 @@
+:root {
+    /* Colores principales (ajusta según tu diseño) */
+    --brand-pine-teal: #1b4332;
+    --brand-emerald: #2dcc70;
+    --brand-amber-gold: #ffbf00;
+    --brand-orange: #fb8500;
+    --brand-off-white: rgb(255 249 236 / 42%);
+    --text-dark: #0f261c;
+    --text-light: #ffffff;
+    --max-width: 1024px;
+    --header-height: 70px;
+}
+
+html, body {
+    background-color: var(--brand-off-white);
+    color: var(--text-dark);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Clases auxiliares que puedas necesitar (opcional) */
+.container-centered {
+    width: 100%;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.content {
+    width: 100%;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}

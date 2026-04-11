@@ -1,21 +1,18 @@
-﻿@using System.Security.Claims
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 
 <div class="page">
-  <main>
-    @* Header *@
-    <header class="top-row">
-      <div class="container-centered">
-        @* Brand *@
-        <div class="me-auto">
-          <a href="/" class="brand-link">
-            <img src="images/logo-pawsitive-friends.svg" alt="Pawsitive Friends" height="48" width="48" />
-            <span class="brand-text d-none d-md-flex">
-              <span class="line-1">Pawsitive</span>
-              <span class="line-2">Friends</span>
-            </span>
-          </a>
-        </div>
+    <main>
+        <header class="top-row">
+            <div class="container-centered d-flex align-items-center justify-content-between w-100">
+                <div class="me-auto">
+                    <a href="/" class="brand-link">
+                        <img src="images/logo-pawsitive-friends.svg" alt="Pawsitive Friends" height="48" width="48" />
+                        <span class="brand-text d-none d-md-flex">
+                            <span class="line-1">Pawsitive</span>
+                            <span class="line-2">Friends</span>
+                        </span>
+                    </a>
+                </div>
 
         @* Nav *@
         <nav class="d-none d-lg-flex">
@@ -34,41 +31,34 @@
           </AuthorizeView>
         </nav>
 
-        @* Auth *@
-        <div class="ms-4">
-          <AuthorizeView>
-            <Authorized>
-              @{
-                var firstName = context.User.FindFirst(ClaimTypes.GivenName)?.Value
-                                ?? context.User.Identity?.Name
-                                ?? "User";
-              }
-              <span class="user-greeting me-2">
-                Hello, <strong>@firstName</strong>
-              </span>
-              <a class="btn btn-outline-danger btn-sm" href="/logout">Log Out</a>
-            </Authorized>
-            <NotAuthorized>
-              <a class="signin-link btn btn-outline-primary" href="/signin">Sign In</a>
-            </NotAuthorized>
-          </AuthorizeView>
-        </div>
-      </div>
-    </header>
+                <div class="ms-4 d-flex align-items-center">
+                    <AuthorizeView>
+                        <Authorized>
+                            @{
+                                var firstName = context.User.Identity?.Name ?? "User";
+                            }
+                            <span class="user-greeting me-2">
+                                Hello, <NavLink class="nav-link-auth" href="management"><strong>@firstName</strong></NavLink>
+                            </span>
+                            <a class="btn btn-outline-danger btn-sm" href="/logout">Log Out</a>
+                        </Authorized>
+                        <NotAuthorized>
+                            <a class="signin-link btn btn-outline-primary" href="/signin">Sign In</a>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </div>
+            </div>
+        </header>
 
-    @* APP *@
-    <article class="content px-4">
-      @Body
-    </article>
-  </main>
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
 
-  @* Footer *@
-  <footer class="site-footer">
-    <span>&copy; 2026 Pawsitive Friends</span>
-    <NavLink href="/user-guide">User Guide</NavLink>
-  </footer>
+
+    <footer class="site-footer">
+        <span>&copy; 2026 Pawsitive Friends</span>
+        <NavLink href="/user-guide">User Guide</NavLink>
+    </footer>
 </div>
 
-@code {
-  
-}

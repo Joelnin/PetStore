@@ -1,0 +1,41 @@
+@using CountryData.Standard
+@using PetStore.Models
+
+@* This component represents a single Shelter card.
+   It matches the design used on the main Shelters page. *@
+
+<NavLink class="shelter-card" href="@($"/shelters/{Shelter.Id}")">
+  <div class="shelter-card">
+
+    <!-- Container for Shelter image -->
+    <div class="shelter-image-container">
+      <!-- Display Shelter image using URL -->
+      <img src="@($"https://ghbvai4swfgyfpoi.public.blob.vercel-storage.com/{Shelter.Id}.png")" alt="@Shelter.Name image" loading="lazy" />
+    </div>
+
+    <!-- Shelter name -->
+    <h3>@Shelter.Name</h3>  
+    <p><strong>Location:</strong> @GetCountry(Shelter.Country)</p>
+    <p>Click to view shelter info</p>
+
+  </div>
+</NavLink>
+
+@code {
+  // Shelter data passed into this reusable component
+  [Parameter]
+  public Shelter Shelter { get; set; } = default!;
+
+  // Helper used to convert country codes into full country names
+  private CountryHelper _helper = new CountryHelper();
+
+  string GetCountry(string code){
+      return mayus(_helper.GetCountryByCode(code).CountryName);
+  }
+
+  // Formats to capitalize fist letter of string for display purposes
+  string mayus(string text){
+    if (string.IsNullOrEmpty(text)) return text;
+    return char.ToUpper(text[0]) + text.Substring(1);
+  }
+}
