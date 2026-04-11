@@ -9,7 +9,7 @@
         <h1>Contact Pawsitive Friends</h1>
         <p class="contact-lead">
             Have a question, need support, or want to learn more about adoption, fostering, or sponsorship?
-            We’d love to hear from you.
+            We'd love to hear from you.
         </p>
     </div>
 </section>
@@ -18,7 +18,7 @@
     <div class="contact-grid">
         <div class="contact-info-card">
             <span class="section-label">Contact Information</span>
-            <h2>We’re Here to Help</h2>
+            <h2>We're Here to Help</h2>
             <p>
                 Reach out to us for general inquiries, support, or more information about the platform.
                 Our team is committed to making the experience simple, welcoming, and helpful.
@@ -42,76 +42,13 @@
 
                 <div class="contact-item">
                     <h3>Hours</h3>
-                    <p>Monday – Friday, 9:00 AM – 5:00 PM</p>
+                    <p>Monday - Friday, 9:00 AM - 5:00 PM</p>
                 </div>
             </div>
-        </div>
-
-        <div class="contact-form-card">
-            <span class="section-label">Send a Message</span>
-            <h2>We’d Love to Hear From You</h2>
-
-            @if (isSubmitted)
-            {
-                <div class="success-message">
-                    Thank you for reaching out. Your message has been received.
-                </div>
-            }
-            else
-            {
-                <EditForm Model="contactForm" OnValidSubmit="HandleSubmit">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
-
-                    <div class="form-group">
-                        <label for="name">Full Name</label>
-                        <InputText id="name" class="form-control" @bind-Value="contactForm.Name" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <InputText id="email" class="form-control" @bind-Value="contactForm.Email" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="subject">Subject</label>
-                        <InputText id="subject" class="form-control" @bind-Value="contactForm.Subject" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="message">Message</label>
-                        <InputTextArea id="message" class="form-control message-box" @bind-Value="contactForm.Message" />
-                    </div>
-
-                    <button type="submit" class="submit-btn">Send Message</button>
-                </EditForm>
-            }
         </div>
     </div>
 </section>
 
 @code {
-    private ContactFormModel contactForm = new();
-    private bool isSubmitted = false;
 
-    private void HandleSubmit()
-    {
-        isSubmitted = true;
-    }
-
-    public class ContactFormModel
-    {
-        [System.ComponentModel.DataAnnotations.Required]
-        public string Name { get; set; } = string.Empty;
-
-        [System.ComponentModel.DataAnnotations.Required]
-        [System.ComponentModel.DataAnnotations.EmailAddress]
-        public string Email { get; set; } = string.Empty;
-
-        [System.ComponentModel.DataAnnotations.Required]
-        public string Subject { get; set; } = string.Empty;
-
-        [System.ComponentModel.DataAnnotations.Required]
-        public string Message { get; set; } = string.Empty;
-    }
 }
