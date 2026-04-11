@@ -1,0 +1,102 @@
+@page "/management/shelters"
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = Roles.Admin)]
+
+@using PetStore.Models
+@using PetStore.Services
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Authorization
+@using System.IO
+
+@inject PetService PetService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Shelter Management</PageTitle>
+
+<!-- This page is for viewing and managing shelters in the system -->
+<h1>Shelter Management</h1>
+
+<!-- Navigation button for adding a new shelter -->
+<button type="button" class="btn btn-primary mb-3" @onclick="CreateShelter">
+  Add Shelter
+</button>
+
+@if (shelters.Count == 0)
+{
+  <p>No shelters found.</p>
+}
+else
+{
+  <!-- Display shelter information -->
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Country</th>
+        <th>State</th>
+        <th>City</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach (var shelter in shelters)
+      {
+        <tr>
+          <td>@shelter.Name</td>
+          <td>@shelter.Country</td>
+          <td>@shelter.State</td>
+          <td>@shelter.City</td>
+          <td>@shelter.Email</td>
+          <td>@shelter.Phone</td>
+          <td>
+            <button class="btn btn-success me-2" type="button" @onclick="() => EditShelter(shelter.Id)">
+              Edit
+            </button>
+
+            <button class="btn btn-danger" type="button" @onclick="() => DeleteShelter(shelter.Id)">
+              Delete
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+
+@code {
+  // List of shelters loaded from the service
+  private List<Shelter> shelters = new();
+
+  // Load all shelters when the page initializes
+  protected override void OnInitialized()
+  {
+    shelters = PetService.GetAllShelters();
+  }
+
+  // Redirects to the add shelter page
+  private void CreateShelter()
+  {
+    NavigationManager.NavigateTo("/management/shelters/add");
+  }
+
+  // Redirects to the edit shelter page
+  private void EditShelter(string? id)
+  {
+    if (!string.IsNullOrWhiteSpace(id))
+    {
+      NavigationManager.NavigateTo($"/management/shelters/edit/{id}");
+    }
+  }
+
+  // Deletes a shelter and reloads the list
+  private void DeleteShelter(string? id)
+  {
+    if (!string.IsNullOrWhiteSpace(id))
+    {
+      PetService.DeleteShelter(id);
+      shelters = PetService.GetAllShelters();
+    }
+  }
+}
