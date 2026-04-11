@@ -30,17 +30,10 @@
     <!-- Each shelter card links to its own details page -->
     @foreach (var shelter in filteredShelters)
     {
-          <NavLink class="shelter-card" href="@($"/shelters/{shelter.Id}")">
-
-
-        <h3>@shelter.Name</h3>
-        <p>Click to view shelter info</p>
-        
-        <p><strong>Location:</strong> @GetCountry(shelter.Country)</p>
-
-      </NavLink>
+      <!-- Pass shelter data and event handler to PetCard -->
+      <ShelterCard Shelter="shelter" />
   }
-</div>
+  </div>
 </div>
 
 

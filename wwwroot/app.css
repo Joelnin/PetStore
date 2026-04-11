@@ -27,6 +27,273 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.nav-link {
+    color: var(--text-dark);
+    font-weight: 500;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+    border-bottom: 2px solid transparent;
+    padding: 0.5rem 1rem;
+}
+
+.nav-link.active {
+    color: var(--brand-emerald) !important; 
+    border-bottom: 2px solid var(--brand-emerald);
+    font-weight: 700;
+}
+
+.nav-link:hover:not(.active) {
+    color: var(--brand-pine-teal);
+    border-bottom: 2px solid var(--brand-amber-gold);
+}
+
+.user-greeting {
+    border-left: 1px solid #dee2e6;
+    padding-left: 1rem;
+}
+
+/* Comportamiento Base (Móvil) */
+.nav-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: white;
+    position: absolute;
+    top: 70px; /* Ajustar a la altura de tu header */
+    left: 0;
+    z-index: 1000;
+}
+
+.nav-list.collapsed {
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.nav-list.expanded {
+    max-height: 400px; /* Suficiente para todos los links */
+    opacity: 1;
+    padding: 1rem 0;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link {
+    padding: 1.2rem 2rem;
+    width: 100%;
+    text-align: left;
+    border-left: 4px solid transparent;
+    transition: all 0.2s;
+}
+
+/* Efecto al estar activo en modo lista */
+.nav-link.active {
+    background-color: var(--brand-off-white);
+    color: var(--brand-emerald) !important;
+    border-left-color: var(--brand-emerald);
+}
+
+/* Adaptación para Escritorio (Desktop) */
+@media (min-width: 992px) {
+    .menu-trigger {
+        display: none;
+    }
+
+    .nav-list {
+        position: static;
+        flex-direction: row;
+        max-height: none !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        width: auto;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .nav-link {
+        padding: 0.5rem 1rem;
+        border-left: none;
+        border-bottom: 2px solid transparent;
+    }
+
+    .nav-link.active {
+        background-color: transparent;
+        border-bottom-color: var(--brand-emerald);
+    }
+}
+
+/* Comportamiento Base (Móvil) */
+.nav-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: white;
+    position: absolute;
+    top: 70px; /* Ajustar a la altura de tu header */
+    left: 0;
+    z-index: 1000;
+}
+
+.nav-list.collapsed {
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.nav-list.expanded {
+    max-height: 400px; /* Suficiente para todos los links */
+    opacity: 1;
+    padding: 1rem 0;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link {
+    padding: 1.2rem 2rem;
+    width: 100%;
+    text-align: left;
+    border-left: 4px solid transparent;
+    transition: all 0.2s;
+}
+
+/* Efecto al estar activo en modo lista */
+.nav-link.active {
+    background-color: var(--brand-off-white);
+    color: var(--brand-emerald) !important;
+    border-left-color: var(--brand-emerald);
+}
+
+/* Adaptación para Escritorio (Desktop) */
+@media (min-width: 992px) {
+    .menu-trigger {
+        display: none;
+    }
+
+    .nav-list {
+        position: static;
+        flex-direction: row;
+        max-height: none !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        width: auto;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .nav-link {
+        padding: 0.5rem 1rem;
+        border-left: none;
+        border-bottom: 2px solid transparent;
+    }
+
+    .nav-link.active {
+        background-color: transparent;
+        border-bottom-color: var(--brand-emerald);
+    }
+}
+
+.menu-trigger {
+    background: transparent;
+    border: none;
+    color: var(--brand-pine-teal); 
+    font-size: 1.8rem; 
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.menu-trigger:active {
+    transform: scale(0.9);
+}
+
+.menu-trigger:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+header.top-row {
+    position: sticky;
+    top: 0;
+    z-index: 1050; /* Por encima de todo el contenido */
+}
+
+/* Estado base del menú en móvil */
+.nav-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: #ffffff;
+    position: absolute;
+    top: 100%; /* Se posiciona justo debajo del header */
+    left: 0;
+    z-index: 1040;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, opacity 0.2s ease;
+}
+
+/* El menú debe estar oculto por defecto */
+.nav-list.collapsed {
+    max-height: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none;
+    border: none;
+}
+
+/* Esta es la clase que Blazor activa al hacer clic */
+.nav-list.expanded {
+    max-height: 500px !important; /* Altura suficiente para los links */
+    opacity: 1 !important;
+    pointer-events: auto;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    border-bottom: 2px solid var(--brand-orange);
+    padding: 1rem 0;
+}
+
+/* Ajuste en app.css */
+
+/* Asegurar que el contenedor padre tenga posición relativa para el menú absoluto */
+header.top-row {
+    position: sticky;
+    top: 0;
+    z-index: 1050; /* Por encima de todo el contenido */
+}
+
+/* Estado base del menú en móvil */
+.nav-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: #ffffff;
+    position: absolute;
+    top: 100%; /* Se posiciona justo debajo del header */
+    left: 0;
+    z-index: 1040;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, opacity 0.2s ease;
+}
+
+/* El menú debe estar oculto por defecto */
+.nav-list.collapsed {
+    max-height: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none;
+    border: none;
+}
+
+/* Esta es la clase que Blazor activa al hacer clic */
+.nav-list.expanded {
+    max-height: 500px !important; /* Altura suficiente para los links */
+    opacity: 1 !important;
+    pointer-events: auto;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    border-bottom: 2px solid var(--brand-orange);
+    padding: 1rem 0;
+}
+
 .brand-link {
     display: flex;
     align-items: center;
@@ -673,7 +940,7 @@ input[type="file"] {
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #c65d2e;
+    color: #8a3f1d;
     margin-bottom: 0.75rem;
 }
 
@@ -914,6 +1181,235 @@ input[type="file"] {
 
     .team-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Contact Us */
+
+.contact-hero {
+    background: linear-gradient(135deg, #fff7f2 0%, #ffe9dc 100%);
+    padding: 5rem 1.5rem 4rem;
+}
+
+.contact-hero-content {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.contact-tag,
+.section-label {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #8a3f1d; /* fixed contrast */
+    margin-bottom: 0.8rem;
+}
+
+.contact-hero h1 {
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    margin-bottom: 1rem;
+    color: #222;
+}
+
+.contact-lead {
+    max-width: 720px;
+    margin: 0 auto;
+    color: #555;
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+.contact-section {
+    padding: 4rem 1.5rem;
+}
+
+.contact-grid {
+    max-width: 1150px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+}
+
+.contact-info-card,
+.contact-form-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.contact-info-card:hover,
+.contact-form-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+}
+
+.contact-info-card h2,
+.contact-form-card h2 {
+    margin-bottom: 1rem;
+    color: #222;
+}
+
+.contact-info-card p,
+.contact-form-card p {
+    color: #555;
+    line-height: 1.7;
+}
+
+.contact-details {
+    margin-top: 1.5rem;
+    display: grid;
+    gap: 1rem;
+}
+
+.contact-item h3 {
+    margin-bottom: 0.3rem;
+    color: #222;
+    font-size: 1rem;
+}
+
+
+.contact-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.submit-btn {
+    padding: 0.9rem 1.6rem;
+    border: none;
+    border-radius: 999px;
+    background: #c65d2e;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.submit-btn:hover {
+    background: #a94d25;
+    transform: translateY(-2px);
+}
+
+.secondary-btn {
+    padding: 0.9rem 1.6rem;
+    border: 1px solid #c65d2e;
+    border-radius: 999px;
+    background: transparent;
+    color: #c65d2e;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.secondary-btn:hover {
+    background: #fff3ec;
+    transform: translateY(-2px);
+}
+
+.topic-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.topic-card {
+    border: 1px solid #eee;
+    border-radius: 16px;
+    padding: 1rem;
+    cursor: pointer;
+    background: #fff;
+    transition: all 0.25s ease;
+}
+
+.topic-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
+}
+
+.topic-card.selected {
+    border-color: #c65d2e;
+    background: #fff7f2;
+}
+
+.topic-display {
+    margin-top: 1.5rem;
+    padding: 1rem 1.2rem;
+    border-radius: 14px;
+    background: #fafafa;
+    border: 1px solid #eee;
+}
+
+
+.faq-section {
+    padding-top: 0;
+}
+
+.faq-wrapper {
+    max-width: 950px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    margin-bottom: 1rem;
+    border: 1px solid #eee;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+.faq-item:hover {
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.04);
+}
+
+.faq-question {
+    width: 100%;
+    text-align: left;
+    padding: 1rem 1.2rem;
+    background: #fff;
+    border: none;
+    font-weight: 600;
+    color: #222;
+    cursor: pointer;
+}
+
+.faq-answer {
+    padding: 0 1.2rem 1rem;
+    color: #555;
+    line-height: 1.7;
+}
+
+@media (max-width: 900px) {
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .topic-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .contact-hero {
+        padding: 4rem 1rem 3rem;
+    }
+
+    .contact-section {
+        padding: 3rem 1rem;
+    }
+
+    .contact-info-card,
+    .contact-form-card {
+        padding: 1.5rem;
     }
 }
 
