@@ -30,19 +30,22 @@
 
                 <div class="ms-4 d-flex align-items-center">
                     <AuthorizeView>
-                        <Authorized>
-                            @{
-                                var firstName = context.User.Identity?.Name ?? "User";
-                            }
-                            <span class="user-greeting me-2">
-                                Hello, <NavLink class="nav-link-auth" href="management"><strong>@firstName</strong></NavLink>
-                            </span>
-                            <a class="btn btn-outline-danger btn-sm" href="/logout">Log Out</a>
-                        </Authorized>
-                        <NotAuthorized>
-                            <a class="signin-link btn btn-outline-primary" href="/signin">Sign In</a>
-                        </NotAuthorized>
+                      <Authorized>
+                          @{
+                            var firstName = context.User.FindFirst(ClaimTypes.GivenName)?.Value
+                            ?? context.User.Identity?.Name
+                            ?? "User";
+                          }
+                          <span class="user-greeting me-2">
+                            Hello, <NavLink class="nav-link-auth" href="management"><strong>@firstName</strong></NavLink>
+                          </span>
+                          <a class="btn btn-outline-danger btn-sm" href="/logout">Log Out</a>
+                      </Authorized>
+                      <NotAuthorized>
+                          <a class="signin-link btn btn-outline-primary" href="/signin">Sign In</a>
+                      </NotAuthorized>
                     </AuthorizeView>
+                  
                 </div>
             </div>
         </header>

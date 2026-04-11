@@ -22,11 +22,11 @@ if (string.IsNullOrEmpty(connectionString))
     throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 }
 
-if (builder.Environment.IsDevelopment())
-{   
-    builder.Services.AddDbContext<PetStoreContext>(options =>
-        options.UseSqlite(connectionString));
-}
+// if (builder.Environment.IsDevelopment())
+// {   
+//     builder.Services.AddDbContext<PetStoreContext>(options =>
+//         options.UseSqlite(connectionString));
+// }
 else
 {
     builder.Services.AddDbContext<PetStoreContext>(options =>
