@@ -24,7 +24,14 @@
           <NavLink class="nav-link" href="shelters">Shelters</NavLink>
           <NavLink class="nav-link" href="contact">Contact Us</NavLink>
           <NavLink class="nav-link" href="donate">Donate</NavLink>
-
+          <!-- Only visible to Admin users -->
+          <AuthorizeView Roles="Admin">
+            <Authorized>
+              <NavLink class="nav-link" href="/management">
+                Update Animals
+              </NavLink>
+            </Authorized>
+          </AuthorizeView>
         </nav>
 
         @* Auth *@
