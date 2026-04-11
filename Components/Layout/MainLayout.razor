@@ -5,7 +5,7 @@
   <main>
     @* Header *@
     <header class="top-row">
-      <div class="container-centered d-flex align-items-center justify-content-between">
+      <div class="container-centered">
         @* Brand *@
         <div class="me-auto">
           <a href="/" class="brand-link">
@@ -17,18 +17,13 @@
           </a>
         </div>
 
-        <button class="menu-trigger d-lg-none" style="z-index: 1100;" @onclick="ToggleMenu"
-                aria-label="Toggle navigation">
-          <i class="bi @(isMenuExpanded ? "bi-x-lg" : "bi-list")"></i>
-        </button>
-
         @* Nav *@
-        <nav class="nav-list @(isMenuExpanded ? "expanded" : "collapsed")">
-          <NavLink class="nav-link" href="about" @onclick="CloseMenu">About Us</NavLink>
-          <NavLink class="nav-link" href="pets" @onclick="CloseMenu">Adopt</NavLink>
-          <NavLink class="nav-link" href="shelters" @onclick="CloseMenu">Shelters</NavLink>
-          <NavLink class="nav-link" href="contact" @onclick="CloseMenu">Contact Us</NavLink>
-          <NavLink class="nav-link" href="donate" @onclick="CloseMenu">Donate</NavLink>
+        <nav class="d-none d-lg-flex">
+          <NavLink class="nav-link" href="about">About Us</NavLink>
+          <NavLink class="nav-link" href="pets">Adopt</NavLink>
+          <NavLink class="nav-link" href="shelters">Shelters</NavLink>
+          <NavLink class="nav-link" href="contact">Contact Us</NavLink>
+          <NavLink class="nav-link" href="donate">Donate</NavLink>
         </nav>
 
         @* Auth *@
@@ -41,7 +36,7 @@
                                 ?? "User";
               }
               <span class="user-greeting me-2">
-                Hello, <NavLink class="nav-link" href="management"><strong>@firstName</strong></NavLink>
+                Hello, <strong>@firstName</strong>
               </span>
               <a class="btn btn-outline-danger btn-sm" href="/logout">Log Out</a>
             </Authorized>
@@ -67,9 +62,4 @@
 </div>
 
 @code {
-  private bool isMenuExpanded = false;
-
-  private void ToggleMenu() => isMenuExpanded = !isMenuExpanded;
-    
-  private void CloseMenu() => isMenuExpanded = false;
 }

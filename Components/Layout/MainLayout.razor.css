@@ -21,49 +21,9 @@
 
 .top-row ::deep .nav-link:hover {
   color: var(--brand-emerald);
+  text-decoration: underline;
 }
 
-
-/* Ajuste en app.css */
-
-/* Asegurar que el contenedor padre tenga posición relativa para el menú absoluto */
-header.top-row {
-    position: sticky;
-    top: 0;
-    z-index: 1050; /* Por encima de todo el contenido */
-}
-
-/* Estado base del menú en móvil */
-.nav-list {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    background-color: #ffffff;
-    position: absolute;
-    top: 100%; /* Se posiciona justo debajo del header */
-    left: 0;
-    z-index: 1040;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out, opacity 0.2s ease;
-}
-
-/* El menú debe estar oculto por defecto */
-.nav-list.collapsed {
-    max-height: 0 !important;
-    opacity: 0 !important;
-    pointer-events: none;
-    border: none;
-}
-
-/* Esta es la clase que Blazor activa al hacer clic */
-.nav-list.expanded {
-    max-height: 500px !important; /* Altura suficiente para los links */
-    opacity: 1 !important;
-    pointer-events: auto;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    border-bottom: 2px solid var(--brand-orange);
-    padding: 1rem 0;
-}
 /* ---- Footer ---- */
 
 .site-footer {
