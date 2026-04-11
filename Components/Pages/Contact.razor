@@ -1,5 +1,6 @@
 @page "/contact"
 @rendermode InteractiveServer
+@inject NavigationManager Navigation
 
 <PageTitle>Contact Us</PageTitle>
 
@@ -9,7 +10,7 @@
         <h1>Contact Pawsitive Friends</h1>
         <p class="contact-lead">
             Have a question, need support, or want to learn more about adoption, fostering, or sponsorship?
-            We'd love to hear from you.
+            We’d love to hear from you.
         </p>
     </div>
 </section>
@@ -18,10 +19,10 @@
     <div class="contact-grid">
         <div class="contact-info-card">
             <span class="section-label">Contact Information</span>
-            <h2>We're Here to Help</h2>
+            <h2>We’re Here to Help</h2>
             <p>
-                Reach out to us for general inquiries, support, or more information about the platform.
-                Our team is committed to making the experience simple, welcoming, and helpful.
+                Reach out to us for general inquiries, platform support, or more information about adoption,
+                fostering, and sponsorship. Our goal is to make the experience simple, welcoming, and helpful.
             </p>
 
             <div class="contact-details">
@@ -42,13 +43,140 @@
 
                 <div class="contact-item">
                     <h3>Hours</h3>
-                    <p>Monday - Friday, 9:00 AM - 5:00 PM</p>
+                    <p>Monday – Friday, 9:00 AM – 5:00 PM</p>
                 </div>
+            </div>
+
+            <div class="contact-actions">
+                <button class="submit-btn" @onclick="OpenEmail">Email Support</button>
+                <button class="secondary-btn" @onclick="CallSupport">Call Support</button>
+            </div>
+        </div>
+
+        <div class="contact-form-card">
+            <span class="section-label">Support Topics</span>
+            <h2>How Can We Help?</h2>
+            <p>
+                Explore common support topics below. This helps users quickly find answers without needing to submit a form.
+            </p>
+
+            <div class="topic-grid">
+                <div class="topic-card @(selectedTopic == "Adoption" ? "selected" : "")" @onclick='() => SelectTopic("Adoption")'>
+                    <h3>Adoption</h3>
+                    <p>Learn more about how adoption works on the platform.</p>
+                </div>
+
+                <div class="topic-card @(selectedTopic == "Fostering" ? "selected" : "")" @onclick='() => SelectTopic("Fostering")'>
+                    <h3>Fostering</h3>
+                    <p>Understand temporary pet care and support options.</p>
+                </div>
+
+                <div class="topic-card @(selectedTopic == "Sponsorship" ? "selected" : "")" @onclick='() => SelectTopic("Sponsorship")'>
+                    <h3>Sponsorship</h3>
+                    <p>See how users can support pets without full adoption.</p>
+                </div>
+
+                <div class="topic-card @(selectedTopic == "Account" ? "selected" : "")" @onclick='() => SelectTopic("Account")'>
+                    <h3>Account</h3>
+                    <p>Get help with user access and account-related questions.</p>
+                </div>
+            </div>
+
+            <div class="topic-display">
+                <h3>@selectedTopic</h3>
+                <p>@topicDescription</p>
             </div>
         </div>
     </div>
 </section>
 
-@code {
+<section class="contact-section faq-section">
+    <div class="faq-wrapper">
+        <span class="section-label">Frequently Asked Questions</span>
+        <h2>Common Questions</h2>
 
+        <div class="faq-item">
+            <button class="faq-question" @onclick='() => ToggleFaq(1)'>
+                What is Pawsitive Friends?
+            </button>
+            @if (openFaq == 1)
+            {
+                <div class="faq-answer">
+                    Pawsitive Friends is a platform that connects people with pets in need of care, companionship, adoption, fostering, and support.
+                </div>
+            }
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" @onclick='() => ToggleFaq(2)'>
+                Can I use the platform without creating an account?
+            </button>
+            @if (openFaq == 2)
+            {
+                <div class="faq-answer">
+                    Yes. Anonymous users can browse pets and view shelter information, but some actions require an account.
+                </div>
+            }
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" @onclick='() => ToggleFaq(3)'>
+                What is the difference between adoption, fostering, and sponsorship?
+            </button>
+            @if (openFaq == 3)
+            {
+                <div class="faq-answer">
+                    Adoption gives a pet a permanent home, fostering provides temporary care, and sponsorship allows users to support a pet without long-term ownership.
+                </div>
+            }
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" @onclick='() => ToggleFaq(4)'>
+                How do I get support?
+            </button>
+            @if (openFaq == 4)
+            {
+                <div class="faq-answer">
+                    Users can contact support through the provided email or phone information and review common help topics on this page.
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private string selectedTopic = "Adoption";
+    private string topicDescription = "Users can browse available pets, review pet profiles, and begin the adoption process through the platform.";
+
+    private int openFaq = 0;
+
+    private void SelectTopic(string topic)
+    {
+        selectedTopic = topic;
+
+        topicDescription = topic switch
+        {
+            "Adoption" => "Users can browse available pets, review pet profiles, and begin the adoption process through the platform.",
+            "Fostering" => "Fostering allows users to temporarily care for a pet and provide support while the pet waits for a permanent home.",
+            "Sponsorship" => "Sponsorship gives users the opportunity to support pets through care-related assistance without adopting them permanently.",
+            "Account" => "Account support covers sign-in access, user roles, and general platform navigation for registered users.",
+            _ => ""
+        };
+    }
+
+    private void ToggleFaq(int faqNumber)
+    {
+        openFaq = openFaq == faqNumber ? 0 : faqNumber;
+    }
+
+    private void OpenEmail()
+    {
+        Navigation.NavigateTo("mailto:support@pawsitivefriends.com", forceLoad: true);
+    }
+
+    private void CallSupport()
+    {
+        Navigation.NavigateTo("tel:+10000000000", forceLoad: true);
+    }
 }
