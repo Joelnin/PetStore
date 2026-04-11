@@ -4,22 +4,78 @@
 
 @using PetStore.Models
 @using PetStore.Services
-@using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Authorization
-@using System.IO
 
 @inject PetService PetService
 @inject NavigationManager NavigationManager
 
 <PageTitle>Shelter Management</PageTitle>
 
-<!-- This page is for viewing and managing shelters in the system -->
+<!-- This page is for adding, editing, and deleting shelters in one place -->
 <h1>Shelter Management</h1>
 
-<!-- Navigation button for adding a new shelter -->
-<button type="button" class="btn btn-primary mb-3" @onclick="CreateShelter">
-  Add Shelter
-</button>
+@if (isEditing)
+{
+  <h3>Edit Shelter</h3>
+}
+else
+{
+  <h3>Add Shelter</h3>
+}
+
+<EditForm Model="currentShelter" OnValidSubmit="SaveShelter">
+  <DataAnnotationsValidator />
+
+  <div class="mb-3">
+    <label for="shelterName">Shelter Name:</label>
+    <InputText id="shelterName" class="form-control" @bind-Value="currentShelter.Name" />
+    <ValidationMessage For="@(() => currentShelter.Name)" />
+  </div>
+
+  <div class="mb-3">
+    <label for="country">Country:</label>
+    <InputText id="country" class="form-control" @bind-Value="currentShelter.Country" />
+    <ValidationMessage For="@(() => currentShelter.Country)" />
+  </div>
+
+  <div class="mb-3">
+    <label for="state">State or Region:</label>
+    <InputText id="state" class="form-control" @bind-Value="currentShelter.State" />
+    <ValidationMessage For="@(() => currentShelter.State)" />
+  </div>
+
+  <div class="mb-3">
+    <label for="city">City:</label>
+    <InputText id="city" class="form-control" @bind-Value="currentShelter.City" />
+    <ValidationMessage For="@(() => currentShelter.City)" />
+  </div>
+
+  <div class="mb-3">
+    <label for="email">Email:</label>
+    <InputText id="email" class="form-control" @bind-Value="currentShelter.Email" />
+    <ValidationMessage For="@(() => currentShelter.Email)" />
+  </div>
+
+  <div class="mb-3">
+    <label for="phone">Phone:</label>
+    <InputText id="phone" class="form-control" @bind-Value="currentShelter.Phone" />
+    <ValidationMessage For="@(() => currentShelter.Phone)" />
+  </div>
+
+  <div class="mt-3 mb-4">
+    @if (isEditing)
+    {
+      <button type="submit" class="btn btn-primary me-2">Save Changes</button>
+      <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+    }
+    else
+    {
+      <button type="submit" class="btn btn-primary">Add Shelter</button>
+    }
+  </div>
+</EditForm>
+
+<hr />
 
 @if (shelters.Count == 0)
 {
@@ -27,7 +83,7 @@
 }
 else
 {
-  <!-- Display shelter information -->
+  <!-- Display all shelters -->
   <table class="table">
     <thead>
       <tr>
@@ -51,7 +107,7 @@ else
           <td>@shelter.Email</td>
           <td>@shelter.Phone</td>
           <td>
-            <button class="btn btn-success me-2" type="button" @onclick="() => EditShelter(shelter.Id)">
+            <button class="btn btn-success me-2" type="button" @onclick="() => StartEdit(shelter.Id)">
               Edit
             </button>
 
@@ -69,34 +125,110 @@ else
   // List of shelters loaded from the service
   private List<Shelter> shelters = new();
 
+  // Form model used for both add and edit
+  private Shelter currentShelter = new()
+  {
+    Name = "",
+    Country = "",
+    State = "",
+    User_id = "admin"
+  };
+
+  // Tracks whether the page is currently editing an existing shelter
+  private bool isEditing = false;
+
   // Load all shelters when the page initializes
   protected override void OnInitialized()
+  {
+    LoadShelters();
+  }
+
+  // Reload shelter list from database
+  private void LoadShelters()
   {
     shelters = PetService.GetAllShelters();
   }
 
-  // Redirects to the add shelter page
-  private void CreateShelter()
+  // Save shelter as either a new record or an updated record
+  private void SaveShelter()
   {
-    NavigationManager.NavigateTo("/management/shelters/add");
+    if (isEditing)
+    {
+      PetService.UpdateShelter(currentShelter);
+    }
+    else
+    {
+      PetService.AddShelter(currentShelter);
+    }
+
+    // Reset form and reload shelter list
+    ResetForm();
+    LoadShelters();
   }
 
-  // Redirects to the edit shelter page
-  private void EditShelter(string? id)
+  // Load selected shelter data into the form for editing
+  private void StartEdit(string? id)
   {
-    if (!string.IsNullOrWhiteSpace(id))
+    if (string.IsNullOrWhiteSpace(id))
     {
-      NavigationManager.NavigateTo($"/management/shelters/edit/{id}");
+      return;
+    }
+
+    var shelter = PetService.GetShelterById(id);
+
+    if (shelter is not null)
+    {
+      currentShelter = new Shelter
+      {
+        Id = shelter.Id,
+        Name = shelter.Name,
+        Country = shelter.Country,
+        State = shelter.State,
+        City = shelter.City,
+        Email = shelter.Email,
+        Phone = shelter.Phone,
+        User_id = shelter.User_id
+      };
+
+      isEditing = true;
     }
   }
 
-  // Deletes a shelter and reloads the list
+  // Delete selected shelter and reload the list
   private void DeleteShelter(string? id)
   {
-    if (!string.IsNullOrWhiteSpace(id))
+    if (string.IsNullOrWhiteSpace(id))
     {
-      PetService.DeleteShelter(id);
-      shelters = PetService.GetAllShelters();
+      return;
     }
+
+    PetService.DeleteShelter(id);
+    LoadShelters();
+
+    // If the deleted shelter was being edited, clear the form
+    if (currentShelter.Id == id)
+    {
+      ResetForm();
+    }
+  }
+
+  // Cancel edit mode and reset the form
+  private void CancelEdit()
+  {
+    ResetForm();
+  }
+
+  // Reset form back to add mode
+  private void ResetForm()
+  {
+    currentShelter = new Shelter
+    {
+      Name = "",
+      Country = "",
+      State = "",
+      User_id = "admin"
+    };
+
+    isEditing = false;
   }
 }
