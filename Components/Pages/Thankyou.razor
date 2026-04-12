@@ -2,35 +2,75 @@
 @using PetStore.Models
 @inject PetStore.Data.PetStoreContext DbContext
 
-<PageTitle>Thank You @Id</PageTitle>
+<PageTitle>Success! | Pawsitive Friends</PageTitle>
 
-<h1>Thank You!</h1>
+<div class="thank-you-container">
+  @if (application is null)
+  {
+    <div class="error-card animate-pop">
+      <i class="bi bi-search-heart display-1 text-muted"></i>
+      <h2>We couldn't find that application</h2>
+      <p>Please double-check your link or contact our support team if you believe this is a mistake.</p>
+      <NavLink href="/" class="btn-return">Return to Home</NavLink>
+    </div>
+  }
+  else
+  {
+    <div class="success-card animate-pop">
+      @* Cabecera de Celebración *@
+      <header class="success-header">
+        <div class="confetti-icon">
+          <i class="bi bi-stars"></i>
+        </div>
+        <h1>You're a Hero, @FormatName(application.FullName)!</h1>
+        <p class="subtitle">Your application for <strong>@application.PetName</strong> has been received.</p>
+      </header>
 
-<!-- If no application is found, show an error message -->
-@if (application is null)
-{
-  <p>We could not find your application.</p>
-}
-else
-{
-  <!-- Display user's name -->
-  <p>Thank you, @FormatName(application.FullName)!</p>
+      <div class="success-body">
+        <div class="info-highlight">
+          <i class="bi bi-send-check"></i>
+          <p>
+            We've forwarded your interest to <strong>@application.ShelterName</strong>.
+            Their team will review your profile and reach out to you within
+            <span class="wait-time">7 to 10 business days</span>.
+          </p>
+        </div>
 
-  <!-- Confirmation message showing selected help type, pet name, and shelter associated with pet -->
-  <p>
-    We have successfully received your application to @application.HelpType?.ToLower() @application.PetName.
-    We will send your application to @application.ShelterName and they will reach out to you within 7 to 10 business days.
-  </p>
+        <section class="summary-box">
+          <h3>Summary of your application</h3>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <label>Action</label>
+              <p>@application.HelpType</p>
+            </div>
+            <div class="summary-item">
+              <label>Pet</label>
+              <p>@application.PetName</p>
+            </div>
+            <div class="summary-item">
+              <label>Phone</label>
+              <p>@FormatPhone(application.PhoneNumber)</p>
+            </div>
+            <div class="summary-item">
+              <label>Email</label>
+              <p>@application.Email</p>
+            </div>
+          </div>
+        </section>
 
-  <p><strong>What we have from you</strong></p>
-  <p>Your Name: @FormatName(application.FullName)</p>
-  <p>Your E-mail: @application.Email</p>
-  <p>Your Phone: @FormatPhone(application.PhoneNumber)</p>
-  <p>Submitted: @application.SubmittedAt.ToString("MMMM d, yyyy")</p>
+        <div class="next-steps">
+          <p><i class="bi bi-info-circle"></i> Keep an eye on your email for the next steps!</p>
+        </div>
+      </div>
 
-  <!-- Navigation back to home page -->
-  <NavLink href="/">Return to Home</NavLink>
-}
+      <footer class="success-footer">
+        <NavLink href="/" class="btn-home">
+          <i class="bi bi-house-door-fill me-2"></i> Return to Home
+        </NavLink>
+      </footer>
+    </div>
+  }
+</div>
 
 @code {
   [Parameter]

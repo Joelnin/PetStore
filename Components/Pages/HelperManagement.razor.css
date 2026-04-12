@@ -1,0 +1,101 @@
+.admin-container {
+    max-width: var(--max-width);
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.page-header {
+    margin: 1.5rem 0 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.page-header h1 {
+    color: var(--primary);
+    font-weight: 800;
+    margin: 0;
+}
+
+.context-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.pet-target {
+    font-weight: 700;
+    color: var(--brand-pine-teal);
+    font-size: 1rem;
+}
+
+.pet-target i { color: var(--brand-emerald); }
+
+.shelter-location {
+    font-size: 0.8rem;
+    color: #777;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.helper-name {
+    display: block;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.help-type-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--brand-off-white);
+    color: var(--primary);
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.action-buttons-group {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.btn-detail-view {
+    text-decoration: none;
+    background: white;
+    color: var(--primary);
+    border: 1px solid #ddd;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-detail-view:hover {
+    background: var(--brand-pine-teal);
+    color: white;
+    border-color: var(--brand-pine-teal);
+}
+
+.btn-delete-icon {
+    background: #fff0f0;
+    color: #e74c3c;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+}
+
+.btn-delete-icon:hover {
+    background: #e74c3c;
+    color: white;
+}
+
+.no-data {
+    color: #bbb;
+}

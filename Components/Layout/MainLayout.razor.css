@@ -2,12 +2,10 @@ header.top-row {
     position: relative;
 }
 
-/* Ocultar checkbox */
 .menu-toggle-checkbox {
     display: none;
 }
 
-/* Botón hamburguesa */
 .menu-trigger {
     background: none;
     border: none;
@@ -28,7 +26,6 @@ header.top-row {
     display: inline-block;
 }
 
-/* Menú móvil: oculto por defecto */
 .nav-list {
     display: flex;
     flex-direction: column;
@@ -66,7 +63,6 @@ header.top-row {
     background-color: #f8f9fa;
 }
 
-/* Escritorio */
 @media (min-width: 992px) {
     .menu-trigger {
         display: none !important;
@@ -98,19 +94,10 @@ header.top-row {
     }
 }
 
-/* Footer y otros estilos (mantén los tuyos) */
 .site-footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     gap: 2rem;
     padding: 1.25rem 1.5rem;
     background-color: #1b4332;
     color: white;
     font-size: 0.875rem;
-    border-top: 3px solid #fb8500;
-}
-.site-footer a {
-    color: #ffbf00;
-    text-decoration: none;
 }

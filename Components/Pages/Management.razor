@@ -8,33 +8,49 @@
 @inject PetService PetService
 @inject NavigationManager NavigationManager
 
-<PageTitle>Management</PageTitle>
+<PageTitle>Admin Dashboard | Pawsitive Friends</PageTitle>
 
-<h1>General Management</h1>
+<div class="management-container">
+  <header class="management-header">
+    <h1 class="display-5 fw-bold">General Management</h1>
+    <p class="text-muted">Welcome back, Admin. Select a module to manage the shelter's operations.</p>
+  </header>
 
-<div class="management-options">
-  @foreach (var m in managementPages)
-  {
-    <button class="btn management-link" @onclick="() => GoToPage(m.Key)">
-      @m.Value
-    </button>
-  }
+  <div class="management-grid">
+    @foreach (var m in managementPages)
+    {
+      <div class="management-card" @onclick="() => GoToPage(m.Key)">
+        <div class="card-icon">
+          <i class="@GetIcon(m.Key)"></i>
+        </div>
+        <div class="card-content">
+          <h3>@m.Value</h3>
+          <p>Manage and review @m.Value.ToLower() entries.</p>
+        </div>
+        <div class="card-arrow">
+          <i class="bi bi-chevron-right"></i>
+        </div>
+      </div>
+    }
+  </div>
 </div>
 
 @code {
-  // Link available for management organized
-  private Dictionary<string, string> managementPages = new ()
-  {
-    { "pets", "Pets" },
-    { "applications/helpers", "Pet Specific Applications" },
-    { "applications/volunteers", "General Volunteers Applications" }
-  };
-
-  private void GoToPage(string pageKey)
+  private Dictionary<string, string> managementPages = new()
     {
-        if (!string.IsNullOrEmpty(pageKey))
-        {
-            NavigationManager.NavigateTo($"/management/{pageKey}");
-        }
-    }
+        { "pets", "Pets" },
+        { "applications/helpers", "Pet Specific Applications" },
+        { "applications/volunteers", "Volunteers Applications" }
+    };
+
+  private void GoToPage(string pageKey) =>
+      NavigationManager.NavigateTo($"/management/{pageKey}");
+
+  private string GetIcon(string key) => key switch
+  {
+    "pets" => "bi bi-heart-half",
+    "applications/helpers" => "bi bi-file-earmark-medical-fill",
+    "applications/volunteers" => "bi bi-people-fill",
+    _ => "bi bi-gear-fill"
+  };
 }

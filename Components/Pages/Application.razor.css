@@ -1,0 +1,104 @@
+.application-hero {
+    background: linear-gradient(135deg, var(--brand-pine-teal), var(--brand-emerald));
+    color: white;
+    padding: 4rem 1rem;
+    text-align: center;
+    border-radius: 0 0 2rem 2rem;
+    margin-bottom: -4rem; 
+}
+
+.hero-overlay h1 { font-weight: 800; font-size: 2.5rem; }
+
+.form-container {
+    max-width: 800px;
+    margin: 0 auto 4rem;
+    background: white;
+    border-radius: 1.5rem;
+    padding: 3rem;
+    position: relative;
+    z-index: 10;
+}
+
+.form-block {
+    margin-bottom: 3rem;
+}
+
+.section-icon {
+    font-size: 2.5rem;
+    color: var(--brand-emerald);
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.custom-input {
+    border: 2px solid #f0f0f0;
+    border-radius: 0.75rem;
+    padding: 0.8rem 1rem;
+    transition: all 0.3s;
+}
+
+.custom-input:focus {
+    border-color: var(--brand-emerald);
+    box-shadow: 0 0 0 4px rgba(45, 204, 112, 0.1);
+}
+
+.help-type-selector {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.selection-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    border: 2px solid #eee;
+    border-radius: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 220px;
+    background: white;
+}
+
+.selection-card i { font-size: 2.5rem; margin-bottom: 1rem; color: #ccc; }
+.selection-card .title { font-weight: 800; font-size: 1.2rem; }
+.selection-card .desc { font-size: 0.8rem; text-align: center; color: #888; }
+
+.btn-check:checked + .selection-card {
+    border-color: var(--brand-emerald);
+    background: #f0fff4;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+.btn-check:checked + .selection-card i { color: var(--brand-emerald); }
+
+.btn-submit-app {
+    background: var(--brand-orange);
+    color: white;
+    border: none;
+    padding: 1rem 3rem;
+    border-radius: 3rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    width: 100%;
+    transition: all 0.3s;
+}
+
+.btn-submit-app:hover {
+    background: var(--brand-amber-gold);
+    transform: scale(1.02);
+}
+
+.btn-submit-app:disabled { background: #ccc; }
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

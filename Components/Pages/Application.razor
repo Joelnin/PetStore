@@ -8,122 +8,139 @@
 @inject PetService PetService
 @attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Client}")]
 
-<PageTitle>Pet Application</PageTitle>
+<PageTitle>Application for @application.PetName | Pawsitive Friends</PageTitle>
 
-<h1>Pet Application</h1>
-
-<!-- Main application form for adopting, fostering, or sponsoring a pet -->
-<EditForm Model="application" OnValidSubmit="HandleSubmit">
-  <DataAnnotationsValidator />
-
-  <div class="form-section">
-    <h3>Personal Information</h3>
-
-    <!-- Basic user information -->
-    <div class="form-group">
-      <label>Full Name</label>
-      <InputText class="form-control" @bind-Value="application.FullName" />
-      <ValidationMessage For="@(() => application.FullName)" />
-    </div>
-
-    <div class="form-group">
-      <label>Email</label>
-      <InputText class="form-control" @bind-Value="application.Email" />
-      <ValidationMessage For="@(() => application.Email)" />
-    </div>
-
-    <div class="form-group">
-      <label>Phone Number</label>
-      <InputText class="form-control" @bind-Value="application.PhoneNumber" />
-      <ValidationMessage For="@(() => application.PhoneNumber)" />
-    </div>
-
-    <div class="form-group">
-      <label>Address</label>
-      <InputText class="form-control" @bind-Value="application.Address" />
-      <ValidationMessage For="@(() => application.Address)" />
-    </div>
+<div class="application-hero">
+  <div class="hero-overlay">
+    <h1>You're about to change a life</h1>
+    <p>Complete this form to start the process for <strong>@application.PetName</strong> at
+      <strong>@application.ShelterName</strong>
+    </p>
   </div>
+</div>
 
-  <div class="form-section">
-    <h3>How Would You Like To Help?</h3>
+<div class="form-container shadow">
+  <EditForm Model="application" OnValidSubmit="HandleSubmit" FormName="PetAppForm">
+    <DataAnnotationsValidator />
 
-    <!-- Radio selection determines which section appears below -->
-    <InputRadioGroup @bind-Value="application.HelpType">
-      <ValidationMessage For="@(() => application.HelpType)" />
+    @* Identity *@
+    <section class="form-block">
+      <div class="section-icon"><i class="bi bi-person-heart"></i></div>
+      <h3 class="mb-4">Tell us about yourself</h3>
+      <div class="row g-3">
+        <div class="col-md-12">
+          <label class="form-label">Full Name</label>
+          <InputText class="form-control custom-input" @bind-Value="application.FullName" placeholder="John Doe" />
+          <ValidationMessage For="@(() => application.FullName)" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Email Address</label>
+          <InputText class="form-control custom-input" @bind-Value="application.Email" placeholder="example@mail.com" />
+          <ValidationMessage For="@(() => application.Email)" />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Phone Number</label>
+          <InputText class="form-control custom-input" @bind-Value="application.PhoneNumber"
+                     placeholder="+1 234 567 890" />
+          <ValidationMessage For="@(() => application.PhoneNumber)" />
+        </div>
+        <div class="col-md-12">
+          <label class="form-label">Current Address</label>
+          <InputText class="form-control custom-input" @bind-Value="application.Address"
+                     placeholder="Street, City, State" />
+          <ValidationMessage For="@(() => application.Address)" />
+        </div>
+      </div>
+    </section>
 
-      <div>
-        <label>
-          <InputRadio Value='@("Adopt")' /> Adopt
+    @* UI Interactive *@
+    <section class="form-block bg-light-soft">
+      <h3 class="text-center mb-4">How would you like to help @application.PetName?</h3>
+      <div class="help-type-selector">
+        <InputRadioGroup @bind-Value="application.HelpType">
+          <div class="selector-option">
+            <InputRadio Value='@("Adopt")' id="optAdopt" class="btn-check" />
+            <label for="optAdopt" class="selection-card">
+              <i class="bi bi-house-heart"></i>
+              <span class="title">Adopt</span>
+              <span class="desc">I want to provide a forever home</span>
+            </label>
+          </div>
+          <div class="selector-option">
+            <InputRadio Value='@("Foster")' id="optFoster" class="btn-check" />
+            <label for="optFoster" class="selection-card">
+              <i class="bi bi-shield-heart"></i>
+              <span class="title">Foster</span>
+              <span class="desc">I can offer temporary care</span>
+            </label>
+          </div>
+        </InputRadioGroup>
+      </div>
+      <div class="text-center">
+        <ValidationMessage For="@(() => application.HelpType)" />
+      </div>
+    </section>
+
+    @if (!string.IsNullOrEmpty(application.HelpType))
+    {
+      <div class="conditional-section animate-fade-in">
+        @if (application.HelpType == "Adopt")
+        {
+          <section class="form-block">
+            <h3 class="mb-4 text-primary">Adoption Details</h3>
+            <div class="mb-3">
+              <label class="form-label">Housing Status (Own/Rent?)</label>
+              <InputText class="form-control custom-input" @bind-Value="application.HousingStatus" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Do you have other pets currently?</label>
+              <InputText class="form-control custom-input" @bind-Value="application.OtherPets" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Why is @application.PetName the one for you?</label>
+              <InputTextArea class="form-control custom-input" rows="4" @bind-Value="application.Reason" />
+            </div>
+          </section>
+        }
+        else if (application.HelpType == "Foster")
+        {
+          <section class="form-block">
+            <h3 class="mb-4 text-secondary">Foster Care Details</h3>
+            <div class="mb-3">
+              <label class="form-label">Estimated foster duration</label>
+              <InputText class="form-control custom-input" @bind-Value="application.FosterLength"
+                         placeholder="e.g. 2 weeks, until adoption..." />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Previous experience with animals</label>
+              <InputTextArea class="form-control custom-input" rows="4" @bind-Value="application.Experience" />
+            </div>
+          </section>
+        }
+      </div>
+    }
+
+    @* Confirmation *@
+    <section class="form-footer">
+      <div class="terms-check mb-4">
+        <label class="check-container">
+          <InputCheckbox @bind-Value="application.AgreeToTerms" />
+          <span class="checkmark"></span>
+          I confirm that all provided information is accurate and honest.
         </label>
+        <ValidationMessage For="@(() => application.AgreeToTerms)" />
       </div>
 
-      <div>
-        <label>
-          <InputRadio Value='@("Foster")' /> Foster
-        </label>
-      </div>
-    </InputRadioGroup>
-  </div>
-
-  @if (application.HelpType == "Adopt")
-  {
-    <!-- Conditional section for adoption-specific questions -->
-    <div class="form-section">
-      <h3>Adoption Questions</h3>
-
-      <div class="form-group">
-        <label>Do you own or rent?</label>
-        <InputText class="form-control" @bind-Value="application.HousingStatus" />
-      </div>
-
-      <div class="form-group">
-        <label>Do you have other pets?</label>
-        <InputText class="form-control" @bind-Value="application.OtherPets" />
-      </div>
-
-      <div class="form-group">
-        <label>Why do you want to adopt?</label>
-        <InputTextArea class="form-control" @bind-Value="application.Reason" />
-      </div>
-    </div>
-  }
-  else if (application.HelpType == "Foster")
-  {
-    <!-- Conditional section for fostering questions -->
-    <div class="form-section">
-      <h3>Foster Questions</h3>
-
-      <div class="form-group">
-        <label>How long can you foster?</label>
-        <InputText class="form-control" @bind-Value="application.FosterLength" />
-      </div>
-
-      <div class="form-group">
-        <label>Experience with animals?</label>
-        <InputTextArea class="form-control" @bind-Value="application.Experience" />
-      </div>
-    </div>
-  }
-
-  <!-- Hidden field to store pet name -->
-  <InputHidden @bind-Value="@application.PetName" />
-
-  <!-- Hidden field to store shelter name -->
-  <InputHidden @bind-Value="@application.ShelterName" />
-
-  <div class="form-section">
-    <!-- Required confirmation checkbox -->
-    <label>
-      <InputCheckbox @bind-Value="application.AgreeToTerms" />
-      I confirm all information is accurate
-    </label>
-    <ValidationMessage For="@(() => application.AgreeToTerms)" />
-  </div>
-
-  <button type="submit" class="btn btn-primary" disabled="@submitted">Submit</button>
-
-</EditForm>
+      <button type="submit" class="btn btn-submit-app" disabled="@submitted">
+        @if (submitted)
+        {
+          <span class="spinner-border spinner-border-sm me-2"></span>
+        }
+        Send My Application <i class="bi bi-send-fill ms-2"></i>
+      </button>
+    </section>
+  </EditForm>
+</div>
 
 @code {
   // Holds all user input from the application form

@@ -1,0 +1,110 @@
+.form-container {
+    max-width: var(--max-width);
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.header-with-avatar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.mini-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--brand-emerald);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 992px) {
+    .form-grid { grid-template-columns: 1fr; }
+}
+
+.form-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 1.25rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.02);
+}
+
+.section-title {
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--primary);
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--brand-off-white);
+    padding-bottom: 0.75rem;
+}
+
+.current-image-wrapper img {
+    width: 100%;
+    max-height: 250px;
+    object-fit: cover;
+    background: #f8f8f8;
+}
+
+.energy-picker-wrapper {
+    display: flex;
+    align-items: center;
+    background: #fdfdfd;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    border: 1px solid #eee;
+}
+
+.energy-picker {
+    display: flex;
+    gap: 0.4rem;
+    font-size: 1.6rem;
+    cursor: pointer;
+}
+
+.energy-icon { color: #e9ecef; transition: transform 0.2s; }
+.energy-icon.active { color: var(--brand-orange); }
+.energy-icon.hover { color: var(--brand-amber-gold); transform: scale(1.15); }
+
+.status-panel {
+    background: var(--brand-off-white);
+    padding: 1.25rem;
+    border-radius: 1rem;
+}
+
+.custom-switch .form-check-input:checked {
+    background-color: var(--brand-emerald);
+    border-color: var(--brand-emerald);
+}
+
+.form-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 2rem;
+    padding-top: 2rem;
+}
+
+.btn-save {
+    background-color: var(--brand-pine-teal);
+    color: white;
+    padding: 0.8rem 2.5rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    border: none;
+    transition: all 0.3s;
+}
+
+.btn-save:hover {
+    background-color: var(--brand-emerald);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(45, 204, 112, 0.3);
+}

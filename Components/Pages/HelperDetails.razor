@@ -11,78 +11,121 @@
 @inject PetService PetService
 @inject NavigationManager NavigationManager
 
-<PageTitle>Application Details</PageTitle>
+<PageTitle>Application Details | @(selectedApplication?.FullName ?? "Admin")</PageTitle>
 
-<a href="/management/applications/helpers/" class="btn management-link-back">Get back to Pet Specific Applications Management</a>
+<div class="details-container">
+    <nav class="navigation-path">
+        <a href="/management/applications/helpers" class="back-link">
+            <i class="bi bi-arrow-left"></i> Back to Helper Management
+        </a>
+    </nav>
 
+    @if (selectedApplication is null)
+    {
+        <div class="alert alert-warning shadow-sm rounded-4 p-4 mt-4">
+            <i class="bi bi-search display-6 d-block mb-3"></i>
+            <h4 class="fw-bold">Application not found</h4>
+            <p class="mb-0">The record you are looking for might have been removed or the ID is incorrect.</p>
+        </div>
+    }
+    else
+    {
+        <header class="detail-header">
+            <div class="header-main">
+                <div class="avatar-placeholder">
+                    <i class="bi bi-person-badge"></i>
+                </div>
+                <div>
+                    <h1 class="display-6 fw-bold">@mayus(selectedApplication.FullName)</h1>
+                    <span class="badge-date">
+                        <i class="bi bi-calendar-event"></i> Submitted on: @selectedApplication.SubmittedAt.ToString("dd MMM yyyy, HH:mm")
+                    </span>
+                </div>
+            </div>
+            <div class="header-tag">
+                <span class="help-badge">@selectedApplication.HelpType</span>
+            </div>
+        </header>
 
+        <div class="details-grid">
+            <div class="details-main">
+                <section class="info-block">
+                    <h2 class="block-title"><i class="bi bi-info-circle-fill"></i> Context</h2>
+                    <div class="context-card">
+                        <div class="context-item">
+                            <label>Target Pet</label>
+                            <p class="fw-bold text-primary">@mayus(selectedApplication.PetName)</p>
+                        </div>
+                        <div class="context-item">
+                            <label>Assigned Shelter</label>
+                            <p>@mayus(selectedApplication.ShelterName)</p>
+                        </div>
+                    </div>
+                </section>
 
-@* If application is not found, show message *@
-@if (selectedApplication is null)
-{
-  <p>Application not found.</p>
-}
-else
-{
-  <section class="application-details">
+                <section class="info-block">
+                    <h2 class="block-title"><i class="bi bi-telephone-outbound-fill"></i> Contact Details</h2>
+                    <div class="contact-list">
+                        <div class="contact-item">
+                            <i class="bi bi-envelope"></i>
+                            <div>
+                                <label>Email Address</label>
+                                <p>@selectedApplication.Email</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-phone"></i>
+                            <div>
+                                <label>Phone Number</label>
+                                <p>@selectedApplication.PhoneNumber</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-geo-alt"></i>
+                            <div>
+                                <label>Physical Address</label>
+                                <p>@selectedApplication.Address</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
 
-    <!-- Application information section -->
-    <div class="application-info">
-      <h2>Application Information</h2>
+            <div class="details-aside">
+                <section class="info-block full-height">
+                    <h2 class="block-title"><i class="bi bi-clipboard-check-fill"></i> Application Responses</h2>
+                    
+                    <div class="response-stack">
+                        @if (selectedApplication.MonthlyAmount is not null)
+                        {
+                            <div class="response-item highlight">
+                                <label>Monthly Commitment</label>
+                                <p class="h4 fw-bold">@selectedApplication.MonthlyAmount.Value.ToString("C")</p>
+                            </div>
+                        }
 
+                        @RenderResponse("Housing Status", selectedApplication.HousingStatus, "bi-house")
+                        @RenderResponse("Other Pets", selectedApplication.OtherPets, "bi-paw")
+                        @RenderResponse("Foster Length", selectedApplication.FosterLength, "bi-clock")
+                        @RenderResponse("Previous Experience", selectedApplication.Experience, "bi-award")
+                        @RenderResponse("Reason for Applying", selectedApplication.Reason, "bi-chat-quote")
+                    </div>
+                </section>
+            </div>
+        </div>
+    }
+</div>
 
-      <h3>Shelter Information</h3>
-
-      <p><strong>Name of the Pet:</strong> @mayus(selectedApplication.PetName)</p>
-      <p><strong>Shelter's Name:</strong> @mayus(selectedApplication.ShelterName)</p>
-
-      <h3>Contact Information</h3>
-      <p><strong>Name of the Applicant:</strong> @mayus(selectedApplication.FullName)</p>
-      <p><strong>Email:</strong> @selectedApplication.Email</p>
-      <p><strong>Phone:</strong> @selectedApplication.PhoneNumber</p>
-      <p><strong>Address:</strong> @selectedApplication.Address</p>
-
-      <h3>Help Information</h3>
-
-      <p><strong>Type of Help</strong> @selectedApplication.HelpType</p>
-      
-      <!-- Optional fields (only show if they exist) -->
-      @if (!string.IsNullOrWhiteSpace(selectedApplication.HousingStatus))
-      {
-        <p><strong>Housing Status:</strong> @selectedApplication.HousingStatus</p>
-      }
-
-      @if (!string.IsNullOrWhiteSpace(selectedApplication.OtherPets))
-      {
-        <p><strong>Other Pets:</strong> @selectedApplication.OtherPets</p>
-      }
-
-      @if (!string.IsNullOrWhiteSpace(selectedApplication.FosterLength))
-      {
-        <p><strong>Foster Length:</strong> @selectedApplication.FosterLength</p>
-      }
-      
-      @if (!string.IsNullOrWhiteSpace(selectedApplication.Experience))
-      {
-        <p><strong>Experience:</strong> @selectedApplication.Experience</p>
-      }
-      
-      @if (!string.IsNullOrWhiteSpace(selectedApplication.Reason))
-      {
-        <p><strong>Reason:</strong> @selectedApplication.Reason</p>
-      }
-      
-      @if (selectedApplication.MonthlyAmount is not null)
-      {
-        <p><strong>Monthly Amount:</strong> @selectedApplication.MonthlyAmount</p>
-      }
-
-      
-      <p><strong>Date of creation</strong> @selectedApplication.SubmittedAt.ToString("dd/MM/yyyy HH:mm")</p>
-
-      
-    </div>
-  </section>
+@code {
+    private RenderFragment RenderResponse(string label, string? value, string icon) => __builder => {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            <div class="response-item">
+                <label><i class="bi @icon me-1"></i> @label</label>
+                <p>@value</p>
+            </div>
+        }
+    };
 }
 
 @code {
