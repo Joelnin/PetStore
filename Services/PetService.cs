@@ -187,6 +187,49 @@ public class PetService
         .FirstOrDefault(s => s.Id == shelterId)?.Name ?? "Unknown Shelter";
   }
 
+  // Add a new shelter to the database.
+  public void AddShelter(Shelter shelter)
+  {
+    if (string.IsNullOrWhiteSpace(shelter.Id))
+    {
+      shelter.Id = Guid.NewGuid().ToString();
+    }
+
+    _context.Shelters.Add(shelter);
+    _context.SaveChanges();
+  }
+
+  // Update an existing shelter if it exists.
+  public void UpdateShelter(Shelter updatedShelter)
+  {
+    var shelter = _context.Shelters.FirstOrDefault(s => s.Id == updatedShelter.Id);
+
+    if (shelter != null)
+    {
+      shelter.Name = updatedShelter.Name;
+      shelter.Country = updatedShelter.Country;
+      shelter.State = updatedShelter.State;
+      shelter.City = updatedShelter.City;
+      shelter.Email = updatedShelter.Email;
+      shelter.Phone = updatedShelter.Phone;
+      shelter.User_id = updatedShelter.User_id;
+
+      _context.SaveChanges();
+    }
+  }
+
+  // Delete a shelter by id if it exists.
+  public void DeleteShelter(string id)
+  {
+    var shelter = _context.Shelters.FirstOrDefault(s => s.Id == id);
+
+    if (shelter != null)
+    {
+      _context.Shelters.Remove(shelter);
+      _context.SaveChanges();
+    }
+  }
+
   // Return dashboard totals for pets and shelters. Async is used here because database counting operations can be awaited efficiently.
   public async Task<(int pets, int shelters)> GetGlobalTotalsAsync()
   {

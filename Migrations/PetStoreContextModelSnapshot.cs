@@ -703,8 +703,8 @@ namespace PetStore.Migrations
                         {
                             Id = "SHELTER-01",
                             Country = "US",
-                            Email = "contact@goldenpawsrescue.org",
-                            Name = "Golden Paws Rescue",
+                            Email = "contact@metropawssocialandadoptionclub.org",
+                            Name = "Metropaws Social & Adoption Club",
                             State = "Pennsylvania",
                             User_id = "user_01"
                         },
@@ -712,8 +712,8 @@ namespace PetStore.Migrations
                         {
                             Id = "SHELTER-02",
                             Country = "CA",
-                            Email = "hello@whiskerhaven.org",
-                            Name = "Whisker Haven",
+                            Email = "hello@meadowhavensanctuary.org",
+                            Name = "Meadow Haven Sanctuary",
                             State = "Ontario",
                             User_id = "user_02"
                         },
@@ -721,8 +721,8 @@ namespace PetStore.Migrations
                         {
                             Id = "SHELTER-03",
                             Country = "AU",
-                            Email = "info@safewingssanctuary.org",
-                            Name = "Safe Wings Sanctuary",
+                            Email = "info@coastalmangroverescue.org",
+                            Name = "Coastal Mangrove Rescue",
                             State = "New South Wales",
                             User_id = "user_03"
                         },
@@ -730,8 +730,8 @@ namespace PetStore.Migrations
                         {
                             Id = "SHELTER-04",
                             Country = "VE",
-                            Email = "support@cloudinthesky.org",
-                            Name = "Cloud in the Sky",
+                            Email = "support@snowypeaksrescue.org",
+                            Name = "Snowy Peaks Rescue",
                             State = "Mérida",
                             User_id = "user_04"
                         },
@@ -739,8 +739,8 @@ namespace PetStore.Migrations
                         {
                             Id = "SHELTER-05",
                             Country = "ZA",
-                            Email = "team@wildheartrefuge.org",
-                            Name = "Wild Heart Refuge",
+                            Email = "team@valleyviewcaninerescue.org",
+                            Name = "Valley View Canine Rescue",
                             State = "Western Cape",
                             User_id = "user_05"
                         },
@@ -748,8 +748,8 @@ namespace PetStore.Migrations
                         {
                             Id = "SHELTER-06",
                             Country = "MX",
-                            Email = "care@hopetailsshelter.org",
-                            Name = "Hope Tails Shelter",
+                            Email = "care@coralkeyanimalrescue.org",
+                            Name = "Coral Key Animal Rescue",
                             State = "Guanajuato",
                             User_id = "user_06"
                         });

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PetStore.Migrations
 {
     /// <inheritdoc />
-    public partial class Finale : Migration
+    public partial class FinalFinale : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -321,12 +321,12 @@ namespace PetStore.Migrations
                 columns: new[] { "Id", "City", "Country", "Email", "Name", "Phone", "State", "User_id" },
                 values: new object[,]
                 {
-                    { "SHELTER-01", null, "US", "contact@goldenpawsrescue.org", "Golden Paws Rescue", null, "Pennsylvania", "user_01" },
-                    { "SHELTER-02", null, "CA", "hello@whiskerhaven.org", "Whisker Haven", null, "Ontario", "user_02" },
-                    { "SHELTER-03", null, "AU", "info@safewingssanctuary.org", "Safe Wings Sanctuary", null, "New South Wales", "user_03" },
-                    { "SHELTER-04", null, "VE", "support@cloudinthesky.org", "Cloud in the Sky", null, "Mérida", "user_04" },
-                    { "SHELTER-05", null, "ZA", "team@wildheartrefuge.org", "Wild Heart Refuge", null, "Western Cape", "user_05" },
-                    { "SHELTER-06", null, "MX", "care@hopetailsshelter.org", "Hope Tails Shelter", null, "Guanajuato", "user_06" }
+                    { "SHELTER-01", null, "US", "contact@metropawssocialandadoptionclub.org", "Metropaws Social & Adoption Club", null, "Pennsylvania", "user_01" },
+                    { "SHELTER-02", null, "CA", "hello@meadowhavensanctuary.org", "Meadow Haven Sanctuary", null, "Ontario", "user_02" },
+                    { "SHELTER-03", null, "AU", "info@coastalmangroverescue.org", "Coastal Mangrove Rescue", null, "New South Wales", "user_03" },
+                    { "SHELTER-04", null, "VE", "support@snowypeaksrescue.org", "Snowy Peaks Rescue", null, "Mérida", "user_04" },
+                    { "SHELTER-05", null, "ZA", "team@valleyviewcaninerescue.org", "Valley View Canine Rescue", null, "Western Cape", "user_05" },
+                    { "SHELTER-06", null, "MX", "care@coralkeyanimalrescue.org", "Coral Key Animal Rescue", null, "Guanajuato", "user_06" }
                 });
 
             migrationBuilder.CreateIndex(
