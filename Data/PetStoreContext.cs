@@ -236,55 +236,55 @@ public class PetStoreContext : IdentityDbContext<ApplicationUser>
       new Shelter
       {
         Id = "SHELTER-01",
-        Name = "Golden Paws Rescue",
+        Name = "Metropaws Social & Adoption Club",
         Country = "US",
         State = "Pennsylvania",
-        Email = "contact@goldenpawsrescue.org",
+        Email = "contact@metropawssocialandadoptionclub.org",
         User_id = "user_01"
       },
       new Shelter
       {
         Id = "SHELTER-02",
-        Name = "Whisker Haven",
+        Name = "Meadow Haven Sanctuary",
         Country = "CA",
         State = "Ontario",
-        Email = "hello@whiskerhaven.org",
+        Email = "hello@meadowhavensanctuary.org",
         User_id = "user_02"
       },
       new Shelter
       {
         Id = "SHELTER-03",
-        Name = "Safe Wings Sanctuary",
+        Name = "Coastal Mangrove Rescue",
         Country = "AU",
         State = "New South Wales",
-        Email = "info@safewingssanctuary.org",
+        Email = "info@coastalmangroverescue.org",
         User_id = "user_03"
       },
       new Shelter
       {
         Id = "SHELTER-04",
-        Name = "Cloud in the Sky",
+        Name = "Snowy Peaks Rescue",
         Country = "VE",
         State = "Mérida",
-        Email = "support@cloudinthesky.org",
+        Email = "support@snowypeaksrescue.org",
         User_id = "user_04"
       },
       new Shelter
       {
         Id = "SHELTER-05",
-        Name = "Wild Heart Refuge",
+        Name = "Valley View Canine Rescue",
         Country = "ZA",
         State = "Western Cape",
-        Email = "team@wildheartrefuge.org",
+        Email = "team@valleyviewcaninerescue.org",
         User_id = "user_05"
       },
       new Shelter
       {
         Id = "SHELTER-06",
-        Name = "Hope Tails Shelter",
+        Name = "Coral Key Animal Rescue",
         Country = "MX",
         State = "Guanajuato",
-        Email = "care@hopetailsshelter.org",
+        Email = "care@coralkeyanimalrescue.org",
         User_id = "user_06"
       }
     );
