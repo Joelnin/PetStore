@@ -19,7 +19,7 @@ namespace PetStore.Models
         public string LastName { get; set; } = string.Empty;
 
         [Required]
-        [Range(1, int.MaxValue)]
+        [Range(1, 10000, ErrorMessage = "Donation must be between $1 and $10,000")]
         public int Amount { get; set; }
 
         public bool IsAnonymous { get; set; } = false;
