@@ -23,109 +23,147 @@
 }
 else
 {
-  <EditForm Model="editPet" OnValidSubmit="SavePet">
-    <DataAnnotationsValidator />
+  <PageTitle>Edit @editPet?.Name | Admin</PageTitle>
 
-    <div>
-      <label for="petname">Name:</label>
-      <InputText id="petname" class="form-control" @bind-Value="editPet.Name" />
-      <ValidationMessage For="@(() => editPet.Name)" />
-    </div>
+  <div class="form-container">
+    <nav class="navigation-path">
+      <a href="/management/pets" class="back-link">
+        <i class="bi bi-arrow-left"></i> Back to Fleet
+      </a>
+    </nav>
 
-    <div>
-      <label for="type">Type:</label>
-      <InputSelect id="type" class="form-control" @bind-Value="editPet.Type">
-        <option value="">Select a Type</option>
-        @foreach (var category in categories)
+    <header class="form-header">
+      <div class="header-with-avatar">
+        @if (!string.IsNullOrEmpty(editPet?.ImageUrl))
         {
-          <option value="@category.Name">@category.Name</option>
+          <img src="@editPet.ImageUrl" class="mini-avatar" alt="Pet Thumbnail" />
         }
-      </InputSelect>
-      <ValidationMessage For="@(() => editPet.Type)" />
-    </div>
-
-    <div>
-      <label for="breed">Breed:</label>
-      <InputText id="breed" class="form-control" @bind-Value="editPet.Breed" />
-      <ValidationMessage For="@(() => editPet.Breed)" />
-    </div>
-
-    <div>
-      <label for="birth">Year of Birth:</label>
-      <InputNumber id="birth" class="form-control" @bind-Value="editPet.YearOfBirth" />
-      <ValidationMessage For="@(() => editPet.YearOfBirth)" />
-    </div>
-
-    <div>
-      <label for="description">Description:</label>
-      <InputTextArea id="description" class="form-control" @bind-Value="editPet.Description" />
-    </div>
-
-    <div>
-      <label for="imageURL">Image URL:</label>
-      <InputText id="imageURL" class="form-control" @bind-Value="editPet.ImageUrl" />
-    </div>
-
-    <div class="mb-3">
-      <label for="newimage" class="form-label">OR <br/> Upload New Image</label>
-      <InputFile id="newimage" class="form-control" OnChange="HandleFileSelected" accept="image/*" />
-
-      @if (!string.IsNullOrWhiteSpace(uploadMessage))
-      {
-        <p class="mt-2">@uploadMessage</p>
-      }
-    </div>
-
-    <!-- Energy picker will allow admin to hover to see energy amount, and click to set it -->
-    <div class="mb-3">
-      <label for="energy" class="form-label">Energy Level</label>
-
-      <div id="energy" class="energy-picker" @onmouseleave="ClearEnergyHover">
-        @for (int i = 1; i <= 5; i++)
-        {
-          var level = i;
-          <span class="energy-icon @(GetEnergyClass(level, editPet!.Energy, hoverEnergy))" @onclick="() => SetEnergy(level)"
-                @onmouseenter="() => PreviewEnergy(level)">
-            ⚡
-          </span>
-        }
+        <div>
+          <h1>Editing: @editPet?.Name</h1>
+          <p>Update the records for this resident.</p>
+        </div>
       </div>
+    </header>
 
-      <ValidationMessage For="@(() => editPet!.Energy)" />
-    </div>
+    @if (editPet == null)
+    {
+      <div class="spinner-container">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2">Loading pet data...</p>
+      </div>
+    }
+    else
+    {
+      <EditForm Model="editPet" OnValidSubmit="SavePet" class="custom-form">
+        <DataAnnotationsValidator />
 
-    <div>
-      <label for="shelter">Shelter:</label>
-      <InputSelect id="shelter" class="form-control" @bind-Value="editPet.Shelter_id">
-        <option value="">Select a Shelter</option>
-        @foreach (var shelter in shelters)
-        {
-          <option value="@shelter.Id">@shelter.Name</option>
-        }
-      </InputSelect>
-      <ValidationMessage For="@(() => editPet.Shelter_id)" />
-    </div>
+        <div class="form-grid">
+          <section class="form-section">
+            <h3 class="section-title"><i class="bi bi-person-badge"></i> Identity</h3>
+                    
+            <div class="mb-3">
+              <label class="form-label fw-bold">Pet Name</label>
+              <InputText class="form-control form-control-lg" @bind-Value="editPet.Name" />
+              <ValidationMessage For="@(() => editPet.Name)" />
+            </div>
 
-    <div class="form-check">
-      <InputCheckbox id="friendly" class="form-check-input" @bind-Value="editPet.Is_Friendly" />
-      <label for="friendly" class="form-check-label">Friendly</label>
-    </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Type</label>
+                <InputSelect class="form-select" @bind-Value="editPet.Type">
+                  @foreach (var category in categories)
+                  {
+                    <option value="@category.Name">@category.Name</option>
+                  }
+                </InputSelect>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Birth Year</label>
+                <InputNumber class="form-control" @bind-Value="editPet.YearOfBirth" />
+              </div>
+            </div>
 
-    <div class="form-check">
-      <InputCheckbox id="adoption" class="form-check-input" @bind-Value="editPet.Is_Adopt" />
-      <label for="adoption" class="form-check-label">Available for Adoption</label>
-    </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Breed</label>
+              <InputText class="form-control" @bind-Value="editPet.Breed" />
+            </div>
 
-    <div class="form-check">
-      <InputCheckbox id="foster" class="form-check-input" @bind-Value="editPet.Is_Foster" />
-      <label for="foster" class="form-check-label">Available for Foster</label>
-    </div>
+            <div class="image-management-box">
+              <label class="form-label fw-bold">Update Photo</label>
+              <div class="current-image-wrapper mb-3">
+                <img src="@editPet.ImageUrl" alt="Current Photo" class="img-fluid rounded-3 shadow-sm" />
+              </div>
+              <div class="upload-options">
+                <InputFile id="newimage" class="form-control mb-2" OnChange="HandleFileSelected" accept="image/*" />
+                <InputText class="form-control" @bind-Value="editPet.ImageUrl" placeholder="Or update Image URL" />
+              </div>
+            </div>
+          </section>
 
-    <br />
+          <section class="form-section">
+            <h3 class="section-title"><i class="bi bi-gear-wide-connected"></i> Parameters</h3>
 
-    <button type="submit">Save Changes</button>
-    <button type="button" @onclick="Cancel">Cancel</button>
-  </EditForm>
+            <div class="mb-4">
+              <label class="form-label fw-bold d-block">Energy Level</label>
+              <div class="energy-picker-wrapper">
+                <div class="energy-picker" @onmouseleave="ClearEnergyHover">
+                  @for (int i = 1; i <= 5; i++)
+                  {
+                    var level = i;
+                    <span class="energy-icon @(GetEnergyClass(level, editPet.Energy, hoverEnergy))"
+                          @onclick="() => SetEnergy(level)" @onmouseenter="() => PreviewEnergy(level)">
+                      <i class="bi bi-lightning-fill"></i>
+                    </span>
+                  }
+                </div>
+                <span class="badge bg-light text-dark ms-2">@(hoverEnergy > 0 ? hoverEnergy : editPet.Energy)/5</span>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-bold">Assigned Shelter</label>
+              <InputSelect class="form-select" @bind-Value="editPet.Shelter_id">
+                @foreach (var shelter in shelters)
+                {
+                  <option value="@shelter.Id">@shelter.Name</option>
+                }
+              </InputSelect>
+            </div>
+
+            <div class="status-panel">
+              <label class="form-label fw-bold mb-3 d-block">Visibility & Traits</label>
+              <div class="switch-group">
+                <div class="form-check form-switch custom-switch">
+                  <InputCheckbox id="friendly" class="form-check-input" @bind-Value="editPet.Is_Friendly" />
+                  <label for="friendly" class="form-check-label">Friendly Temperament</label>
+                </div>
+                <div class="form-check form-switch custom-switch">
+                  <InputCheckbox id="adoption" class="form-check-input" @bind-Value="editPet.Is_Adopt" />
+                  <label for="adoption" class="form-check-label">Active for Adoption</label>
+                </div>
+                <div class="form-check form-switch custom-switch">
+                  <InputCheckbox id="foster" class="form-check-input" @bind-Value="editPet.Is_Foster" />
+                  <label for="foster" class="form-check-label">Ready for Foster Care</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <label class="form-label fw-bold">Biography</label>
+              <InputTextArea class="form-control" rows="5" @bind-Value="editPet.Description" />
+            </div>
+          </section>
+        </div>
+
+        <div class="form-footer mt-5">
+          <button type="button" class="btn btn-link text-muted" @onclick="Cancel">Discard Changes</button>
+          <button type="submit" class="btn btn-save shadow">
+            <i class="bi bi-check2-circle me-2"></i> Update Records
+          </button>
+        </div>
+      </EditForm>
+    }
+  </div>
 }
 
 @code {

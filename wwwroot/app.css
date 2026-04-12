@@ -1444,3 +1444,15 @@ input[type="file"] {
     max-width: 320px;
     border: 1px solid black;
 }
+
+.site-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+a.footer-nav-link {
+    color: #ffbf00 !important;
+    font-weight: 600;
+    text-decoration: none;
+}

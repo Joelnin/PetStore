@@ -1,0 +1,79 @@
+.management-container {
+    max-width: var(--max-width);
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.management-header {
+    margin-bottom: 3rem;
+    border-left: 5px solid var(--brand-emerald);
+    padding-left: 1.5rem;
+    border-radius: 0.8rem;
+    text-align: center;
+}
+
+.management-header h1 {
+    color: var(--primary);
+}
+
+.management-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.management-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+.management-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    border-color: var(--secondary);
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    background-color: var(--brand-off-white);
+    color: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.management-card:hover .card-icon {
+    background-color: var(--brand-emerald);
+    color: white;
+}
+
+.card-content h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+.card-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.card-arrow {
+    margin-left: auto;
+    color: #ccc;
+    font-size: 1.2rem;
+}

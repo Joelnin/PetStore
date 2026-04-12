@@ -1,0 +1,108 @@
+.admin-container {
+    max-width: var(--max-width);
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.back-link {
+    text-decoration: none;
+    color: var(--brand-pine-teal);
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: var(--brand-emerald);
+}
+
+/* Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin: 1.5rem 0 2rem 0;
+}
+
+.page-header h1 {
+    color: var(--primary);
+    margin: 0;
+    font-weight: 800;
+}
+
+.stat-badge {
+    background: var(--brand-off-white);
+    color: var(--primary);
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.custom-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.custom-table {
+    margin-bottom: 0;
+}
+
+.custom-table thead {
+    background-color: #f8fbf9;
+}
+
+.custom-table th {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05rem;
+    color: #888;
+    padding: 1.25rem;
+    border-bottom: 2px solid #eee;
+}
+
+.custom-table td {
+    padding: 1.25rem;
+    vertical-align: middle;
+}
+
+/* Contact Info Column */
+.contact-cell {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.85rem;
+    gap: 0.2rem;
+}
+
+.contact-cell i {
+    color: var(--brand-emerald);
+    margin-right: 0.4rem;
+}
+
+.badge-type {
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.badge-type.general { background: #e3f2fd; color: #1976d2; }
+.badge-type.medical { background: #fff3e0; color: #f57c00; }
+
+.btn-delete {
+    background: #fff0f0;
+    color: #e74c3c;
+    border: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+}
+
+.btn-delete:hover {
+    background: #e74c3c;
+    color: white;
+    transform: scale(1.1);
+}

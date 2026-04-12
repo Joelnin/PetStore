@@ -7,48 +7,82 @@
 @inject PetService PetService
 @inject NavigationManager NavigationManager
 
-<PageTitle>Management | Helper Applications</PageTitle>
+<div class="admin-container">
+  <nav class="navigation-path">
+    <a href="/management" class="back-link">
+      <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+  </nav>
 
-<a href="/management" class="btn management-link-back">Back to General Management</a>
+  <header class="page-header">
+    <div class="header-content">
+      <h1>Pet Specific Applications</h1>
+      <p>Track contributions and support assigned to specific animals in our shelters.</p>
+    </div>
+    <div class="header-stats">
+      <span class="stat-badge">Active Collaborations: @applications.Count</span>
+    </div>
+  </header>
 
-<h1>Pet Specific Applications Management</h1>
-
-<!-- Display application information -->
-<table class="table">
-  <thead class="text-center">
-    <tr>
-      <th>Shelter Name</th>
-      <th>Pet Name</th>
-      <th>Helper's Name</th>
-      <th>Type of Help</th>
-      <th>Address</th>
-      <th>More info</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    @foreach (var application in applications)
-    {
-      <tr>
-        <td>@application.ShelterName</td>
-        <td>@application.PetName</td>
-        <td>@application.FullName</td>
-        <td>@application.HelpType</td>
-        <td>@application.Address</td>
-        <td><a href="/management/applications/helpers/@application.Id">More Details</a></td>
-        <td>
-          <button class="btn btn-danger me-2 w-100" type="button" @onclick="() => DeleteApplication(application.Id)">
-            Delete
-          </button>
-        </td>
-      </tr>
-    }
-  </tbody>
-</table>
-
-
-
+  <div class="table-responsive custom-card">
+    <table class="table custom-table align-middle">
+      <thead>
+        <tr>
+          <th>Target Context</th>
+          <th>Helper Details</th>
+          <th>Contribution</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (applications.Any())
+        {
+          @foreach (var app in applications)
+          {
+            <tr>
+              <td>
+                <div class="context-cell">
+                  <span class="pet-target"><i class="bi bi-heart-pulse-fill"></i> @app.PetName</span>
+                  <span class="shelter-location"><i class="bi bi-geo-alt"></i> @app.ShelterName</span>
+                </div>
+              </td>
+              <td>
+                <div class="helper-info">
+                  <span class="helper-name">@app.FullName</span>
+                  <span class="helper-address text-muted small">@app.Address</span>
+                </div>
+              </td>
+              <td>
+                <div class="help-type-tag">
+                  <i class="bi bi-hand-thumbs-up"></i> @app.HelpType
+                </div>
+              </td>
+              <td class="text-end">
+                <div class="action-buttons-group">
+                  <a href="/management/applications/helpers/@app.Id" class="btn-detail-view" title="View Full Profile">
+                    <i class="bi bi-eye"></i> Details
+                  </a>
+                  <button class="btn-delete-icon" @onclick="() => DeleteApplication(app.Id)" title="Remove Record">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        }
+        else
+        {
+          <tr>
+            <td colspan="4" class="text-center py-5 no-data">
+              <i class="bi bi-clipboard-x display-4 d-block mb-3"></i>
+              <p>No specific helper applications found at the moment.</p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
 
 @code {
   // Holds all applications displayed in table

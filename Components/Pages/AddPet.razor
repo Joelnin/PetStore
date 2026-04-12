@@ -12,129 +12,136 @@
 @inject NavigationManager NavigationManager
 @inject IWebHostEnvironment Env
 
-<PageTitle>Management | Add Pets</PageTitle>
+<PageTitle>Add New Pet | Admin</PageTitle>
 
+<div class="form-container">
+  <nav class="navigation-path">
+    <a href="/management/pets" class="back-link">
+      <i class="bi bi-arrow-left"></i> Back to List
+    </a>
+  </nav>
 
-<!-- This page is for adding new pets into the system -->
-<h1>Add Pet</h1>
+  <header class="form-header">
+    <h1>Register New Pet</h1>
+    <p>Fill in the details to add a new resident to the shelter.</p>
+  </header>
 
-<EditForm Model="newPet" OnValidSubmit="SavePet">
-  <DataAnnotationsValidator />
+  <EditForm Model="newPet" OnValidSubmit="SavePet" class="custom-form">
+    <DataAnnotationsValidator />
 
-  <div class="mb-3">
-    <label for="petName">Name:</label>
-    <InputText id="petName" class="form-control" @bind-Value="newPet.Name" />
-    <ValidationMessage For="@(() => newPet.Name)" />
-  </div>
+    <div class="form-grid">
+      <section class="form-section">
+        <h3 class="section-title"><i class="bi bi-info-circle"></i> Basic Information</h3>
+                
+        <div class="mb-3">
+          <label class="form-label fw-bold">Pet Name</label>
+          <InputText class="form-control" @bind-Value="newPet.Name" placeholder="e.g. Buddy" />
+          <ValidationMessage For="@(() => newPet.Name)" />
+        </div>
 
-  <div class="mb-3">
-    <label for="petType">Type:</label>
-    <InputSelect id="petType" class="form-control" @bind-Value="newPet.Type">
-      <option value="">Select a Type</option>
-      @foreach (var type in categories)
-      {
-        <option value="@type.Name">@type.Name</option>
-      }
-    </InputSelect>
-    <ValidationMessage For="@(() => newPet.Type)" />
-  </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-bold">Type</label>
+            <InputSelect class="form-select" @bind-Value="newPet.Type">
+              <option value="">Select Type</option>
+              @foreach (var type in categories)
+              {
+                <option value="@type.Name">@type.Name</option>
+              }
+            </InputSelect>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-bold">Birth Year</label>
+            <InputNumber class="form-control" @bind-Value="newPet.YearOfBirth" />
+          </div>
+        </div>
 
-  <div class="mb-3">
-    <label for="petBreed">Breed:</label>
-    <InputText id="petBreed" class="form-control" @bind-Value="newPet.Breed" />
-    <ValidationMessage For="@(() => newPet.Breed)" />
-  </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">Breed</label>
+          <InputText class="form-control" @bind-Value="newPet.Breed" placeholder="e.g. Golden Retriever" />
+        </div>
 
-  <div class="mb-3">
-    <label for="petAge">Year of Birth:</label>
-    <InputNumber id="petAge" class="form-control" @bind-Value="newPet.YearOfBirth" />
-    <ValidationMessage For="@(() => newPet.YearOfBirth)" />
-  </div>
+        <div class="image-upload-zone">
+          <label class="form-label fw-bold">Pet Photo</label>
+          <div class="upload-controls">
+            <InputFile id="petImageUpload" class="form-control mb-2" OnChange="HandleFileSelected" accept="image/*" />
+            <InputText class="form-control" @bind-Value="newPet.ImageUrl" placeholder="Or paste Image URL" />
+          </div>
+          @if (!string.IsNullOrEmpty(newPet.ImageUrl))
+          {
+            <div class="image-preview mt-2">
+              <img src="@newPet.ImageUrl" alt="Preview" />
+            </div>
+          }
+        </div>
+      </section>
 
-  <div class="mb-3">
-    <!-- Textarea for longer description input -->
-    <label for="petDescription">Description:</label>
-    <InputTextArea id="petDescription" class="form-control" @bind-Value="newPet.Description" />
-  </div>
+      @* Details *@
+      <section class="form-section">
+        <h3 class="section-title"><i class="bi bi-stars"></i> Personality & Status</h3>
 
-  <div class="mb-3">
-    <!-- Default image link if user doesn't upload -->
-    <label for="petImage">Image URL:</label>
-    <InputText id="petImage" class="form-control" @bind-Value="newPet.ImageUrl" placeholder="Default used if empty" />
-  </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">Energy Level</label>
+          <div class="energy-picker-container">
+            <div class="energy-picker" @onmouseleave="ClearEnergyHover">
+              @for (int i = 1; i <= 5; i++)
+              {
+                var level = i;
+                <span class="energy-icon @(GetEnergyClass(level, newPet.Energy, hoverEnergy))"
+                      @onclick="() => SetEnergy(level)" @onmouseenter="() => PreviewEnergy(level)">
+                  <i class="bi bi-lightning-fill"></i>
+                </span>
+              }
+            </div>
+            <span class="energy-label">@(hoverEnergy > 0 ? hoverEnergy : newPet.Energy)/5</span>
+          </div>
+        </div>
 
-  <div class="mb-3">
-    <!-- Allows user to upload an image file from their computer -->
-    <label for="petImageUpload">OR Upload Image:</label>
-    <InputFile id="petImageUpload" class="form-control" OnChange="HandleFileSelected" accept="image/*" />
+        <div class="mb-3">
+          <label class="form-label fw-bold">Shelter Location</label>
+          <InputSelect class="form-select" @bind-Value="newPet.Shelter_id">
+            <option value="">Select Shelter</option>
+            @foreach (var shelter in shelters)
+            {
+              <option value="@shelter.Id">@shelter.Name</option>
+            }
+          </InputSelect>
+        </div>
 
-    @if (!string.IsNullOrWhiteSpace(uploadMessage))
-    {
-      <p class="mt-2">@uploadMessage</p>
-    }
-  </div>
+        <div class="status-box">
+          <label class="form-label fw-bold mb-3 d-block">Availability & Temperament</label>
+          <div class="status-switches">
+            <div class="form-check form-switch">
+              <InputCheckbox id="friendly" class="form-check-input" @bind-Value="newPet.Is_Friendly" />
+              <label for="friendly" class="form-check-label">Friendly Personality</label>
+            </div>
+            <div class="form-check form-switch">
+              <InputCheckbox id="adoptable" class="form-check-input" @bind-Value="newPet.Is_Adopt" />
+              <label for="adoptable" class="form-check-label">Ready for Adoption</label>
+            </div>
+            <div class="form-check form-switch">
+              <InputCheckbox id="fosterable" class="form-check-input" @bind-Value="newPet.Is_Foster" />
+              <label for="fosterable" class="form-check-label">Ready for Foster</label>
+            </div>
+          </div>
+        </div>
 
-  <!-- Energy picker will allow admin to hover over icon, and click to set the amount-->
-  <div class="mb-3">
-    <label class="form-label">Energy Level</label>
-
-    <div class="energy-picker" @onmouseleave="ClearEnergyHover">
-      @for (int i = 1; i <= 5; i++)
-      {
-        var level = i;
-        <span 
-                class="energy-icon @(GetEnergyClass(level, newPet.Energy, hoverEnergy))"
-                @onclick="() => SetEnergy(level)"
-                @onmouseenter="() => PreviewEnergy(level)"
-                aria-label="Set energy level to @level">
-          ⚡
-        </span>
-      }
+        <div class="mb-3">
+          <label class="form-label fw-bold">Description / Story</label>
+          <InputTextArea class="form-control" rows="4" @bind-Value="newPet.Description"
+                         placeholder="Tell Buddy's story..." />
+        </div>
+      </section>
     </div>
 
-    <ValidationMessage For="@(() => newPet.Energy)" />
-  </div>
-
-  <!-- Shelters presented as dropdown menu to avoid confusion with different shelters -->
-  <div class="mb-3">
-    <label for="shelter">Shelter:</label>
-    <InputSelect id="shelter" class="form-control" @bind-Value="newPet.Shelter_id">
-      <option value="">Select a Shelter</option>
-      @foreach (var shelter in shelters)
-      {
-        <option value="@shelter.Id">@shelter.Name</option>
-      }
-    </InputSelect>
-    <ValidationMessage For="@(() => newPet.Shelter_id)" />
-  </div>
-
-  <div class="form-check accessible-check">
-    <!-- Allows admin to let client know if pet is friendly or not -->
-    <InputCheckbox id="friendly" class="form-check-input" @bind-Value="newPet.Is_Friendly" />
-    <label for="friendly" class="form-check-label">Friendly</label>
-  </div>
-  <ValidationMessage For="@(() => newPet.Is_Friendly)" />
-
-
-  <div class="form-check accessible-check">
-    <!-- Admin lets client know if pet is available to adopt -->
-    <InputCheckbox id="adoptable" class="form-check-input" @bind-Value="newPet.Is_Adopt" />
-    <label for="adoptable" class="form-check-label">Available for Adoption:</label>
-  </div>
-  <ValidationMessage For="@(() => newPet.Is_Adopt)" />
-
-  <div class="form-check accessible-check">
-    <!-- Admin lets client know if pet is ready to foster -->
-    <InputCheckbox id="fosterable" class="form-check-input" @bind-Value="newPet.Is_Foster" />
-    <label for="fosterable" class="form-check-label">Available for Foster:</label>
-  </div>
-  <ValidationMessage For="@(() => newPet.Is_Foster)" />
-
-  <div class="mt-3">
-    <button type="submit" class="btn btn-primary me-2">Save</button>
-    <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
-  </div>
-</EditForm>
+    <div class="form-actions mt-4">
+      <button type="button" class="btn btn-outline-secondary px-4 py-2" @onclick="Cancel">Cancel</button>
+      <button type="submit" class="btn btn-primary px-5 py-2 fw-bold shadow-sm">
+        <i class="bi bi-cloud-arrow-up-fill me-2"></i> Register Pet
+      </button>
+    </div>
+  </EditForm>
+</div>
 
 @code {
   @* // Model bound to the form inputs

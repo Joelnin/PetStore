@@ -4,7 +4,7 @@
 @inject IDonationService DonationService
 @inject NavigationManager NavManager
 
-<PageTitle>Make a Donation - Pawsitive Friends</PageTitle>
+<PageTitle>Make a Donation | Pawsitive Friends</PageTitle>
 
 <div class="container mt-4 mb-5">
     @* Impact *@
@@ -63,7 +63,7 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Donation Amount ($)</label>
-                            <InputNumber @bind-Value="donationModel!.Amount" class="form-control" placeholder="10" />
+                            <InputNumber @bind-Value="donationModel!.Amount" class="form-control" @bind-Value:after="() => StateHasChanged()" />
                             <ValidationMessage For="@(() => donationModel.Amount)" class="text-danger small mt-1" />
                         </div>
 
@@ -90,7 +90,6 @@
         </div>
     </div>
 </div>
-
 @code {
     [SupplyParameterFromForm(FormName = "DonationForm")]
     private Donation? donationModel { get; set; }
@@ -98,17 +97,39 @@
     private bool isLoading = false;
     private string? errorMessage;
 
-    protected override void OnInitialized() => donationModel ??= new();
+    protected override void OnInitialized() 
+    {
+        if (donationModel is null)
+        {
+            donationModel = new() 
+            { 
+                FirstName = string.Empty, 
+                LastName = string.Empty,
+                Amount = 0 
+            };
+        }
+    }
 
     private async Task HandleValidSubmit()
     {
         if (donationModel is null) return;
+
+        if (string.IsNullOrWhiteSpace(donationModel.FirstName) || 
+            string.IsNullOrWhiteSpace(donationModel.LastName) ||
+            donationModel.Amount <= 0)
+        {
+            errorMessage = "Please fill in all required fields correctly.";
+            return;
+        }
         
         isLoading = true;
         errorMessage = null;
 
         try
         {
+            donationModel.FirstName = donationModel.FirstName.Trim();
+            donationModel.LastName = donationModel.LastName.Trim();
+            
             donationModel.SubmittedAt = DateTime.UtcNow;
             donationModel.Status = DonationStatus.Pending;
 
@@ -125,7 +146,7 @@
         }
         catch (Exception ex)
         {
-            errorMessage = "A technical error occurred. Our team has been notified.";
+            errorMessage = "A technical error occurred.";
             Console.WriteLine($"Donation Error: {ex.Message}");
         }
         finally

@@ -7,42 +7,74 @@
 @inject PetService PetService
 @inject NavigationManager NavigationManager
 
-<PageTitle>Management | Volunteer Applications</PageTitle>
+<PageTitle>Volunteers | Admin</PageTitle>
 
-<a href="/management" class="btn management-link-back" >Back to General Management</a>
+<div class="admin-container">
+  <nav class="navigation-path">
+    <a href="/management" class="back-link">
+      <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+  </nav>
 
-<h1>Volunteer Applications Management</h1>
+  <header class="page-header">
+    <div class="header-content">
+      <h1>Volunteer Applications</h1>
+      <p>Review and manage people who want to join the Pawsitive Friends family.</p>
+    </div>
+    <div class="header-stats">
+      <span class="stat-badge">Total: @applications.Count</span>
+    </div>
+  </header>
 
-<!-- Display application information -->
-<table class="table">
-  <thead class="text-center">
-    <tr>
-      <th>Type of Volunteer</th>
-      <th>Name</th>
-      <th>Phone Number</th>
-      <th>Email</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    @foreach (var application in applications)
-    {
-      <tr>
-        <td>@application.VolunteerType.ToString()</td>
-        <td>@application.Name</td>
-        <td>@application.PhoneNumber</td>
-        <td>@application.Email</td>
-
-        <td>
-          <button class="btn btn-danger me-2 w-100" type="button" @onclick="() => DeleteApplication(application.Id)">
-            Delete
-          </button>
-        </td>
-      </tr>
-    }
-  </tbody>
-</table>
+  <div class="table-responsive custom-card">
+    <table class="table custom-table">
+      <thead>
+        <tr>
+          <th>Volunteer Type</th>
+          <th>Full Name</th>
+          <th>Contact Info</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (applications.Any())
+        {
+          @foreach (var app in applications)
+          {
+            <tr>
+              <td>
+                <span class="badge-type @app.VolunteerType.ToString().ToLower()">
+                  @app.VolunteerType
+                </span>
+              </td>
+              <td class="fw-bold">@app.Name</td>
+              <td>
+                <div class="contact-cell">
+                  <span><i class="bi bi-envelope"></i> @app.Email</span>
+                  <span><i class="bi bi-telephone"></i> @app.PhoneNumber</span>
+                </div>
+              </td>
+              <td class="text-end">
+                <button class="btn-delete" @onclick="() => DeleteApplication(app.Id)" title="Remove Application">
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        }
+        else
+        {
+          <tr>
+            <td colspan="4" class="text-center py-5 text-muted">
+              <i class="bi bi-inbox display-4 d-block mb-2"></i>
+              No pending volunteer applications.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
 
 @code {
   // Holds all pets displayed in table

@@ -5,79 +5,108 @@
 @using PetStore.Models
 @using PetStore.Services
 @inject PetService PetService
-<PageTitle>Category Management</PageTitle>
 
-<h1>Category Management</h1>
-<!-- Form to create a new category -->
-<EditForm Model="newCategory" OnValidSubmit="AddCategory">
-  <DataAnnotationsValidator />
+<PageTitle>Categories | Admin</PageTitle>
 
-  <div class="mb-3">
-    <label for="typeName" class="form-label">Name</label>
-    <InputText id="typeName" class="form-control" @bind-Value="newCategory.Name" />
-    <ValidationMessage class="text-danger" For="@(() => newCategory.Name)" />
+<div class="admin-container">
+  <nav class="navigation-path">
+    <a href="/management/pets" class="back-link">
+      <i class="bi bi-arrow-left"></i> Back to Pets
+    </a>
+  </nav>
+
+  <div class="management-layout">
+    @* Form *@
+    <aside class="creation-sidebar">
+      <div class="custom-card p-4">
+        <h3 class="section-title"><i class="bi bi-tag-fill"></i> New Category</h3>
+        <p class="text-muted small">Add a new pet classification to the system.</p>
+                
+        <EditForm Model="newCategory" OnValidSubmit="AddCategory">
+          <DataAnnotationsValidator />
+          <div class="mb-3">
+            <label class="form-label fw-bold">Category Name</label>
+            <InputText class="form-control" @bind-Value="newCategory.Name" placeholder="e.g. Exotic Birds" />
+            <ValidationMessage class="text-danger small" For="@(() => newCategory.Name)" />
+          </div>
+          <button type="submit" class="btn btn-add-category w-100">
+            <i class="bi bi-plus-circle me-2"></i> Add Category
+          </button>
+        </EditForm>
+
+        @if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+          <div class="alert alert-danger mt-3 py-2 small shadow-sm">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @errorMessage
+          </div>
+        }
+      </div>
+    </aside>
+
+    @* Edit Inline *@
+    <main class="list-content">
+      <div class="custom-card h-100">
+        <div class="card-header-styled">
+          <h2 class="m-0">Current Categories</h2>
+          <span class="badge rounded-pill bg-light text-dark">@categories.Count Total</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table align-middle custom-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @foreach (var category in categories)
+              {
+                <tr class="@(editCategory?.Id == category.Id ? "editing-row" : "")">
+                  @if (editCategory?.Id == category.Id)
+                  {
+                    <td>
+                      <InputText class="form-control form-control-sm edit-input" @bind-Value="editCategory.Name"
+                                 @onkeyup="HandleKeyUp" />
+                    </td>
+                    <td class="text-end">
+                      <div class="action-buttons">
+                        <button class="btn-save-inline" @onclick="SaveEdit" title="Save Changes">
+                          <i class="bi bi-check-lg"></i>
+                        </button>
+                        <button class="btn-cancel-inline" @onclick="CancelEdit" title="Cancel">
+                          <i class="bi bi-x-lg"></i>
+                        </button>
+                      </div>
+                    </td>
+                  }
+                  else
+                  {
+                    <td class="category-name-cell">
+                      <i class="bi bi-hash text-muted me-2"></i>
+                      @FormatCategoryName(category.Name)
+                    </td>
+                    <td class="text-end">
+                      <div class="action-buttons">
+                        <button class="btn-edit-inline" @onclick="() => StartEdit(category)" title="Edit Name">
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn-delete-inline" @onclick="() => DeleteCategory(category.Id)"
+                                title="Delete Category">
+                          <i class="bi bi-trash3"></i>
+                        </button>
+                      </div>
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
   </div>
-
-  <button type="submit" class="btn btn-primary">Add Category</button>
-</EditForm>
-
-<hr />
-<!-- Displays error messages (example: "Cannot delete category in use") -->
-@if (!string.IsNullOrWhiteSpace(errorMessage))
-{
-  <p class="text-danger">@errorMessage</p>
-}
-
-<h2>Current Categories</h2>
-
-<table class="table">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th style="width:200px;">Actions</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    @foreach (var category in categories)
-    {
-      <tr>
-        @if (editCategory?.Id == category.Id)
-        {
-          <!-- Allows admin to edit inline instead of going to a new page -->
-          <td>
-            <InputText class="form-control" @bind-Value="editCategory.Name" />
-          </td>
-
-          <td>
-            <button class="btn btn-success me-2" @onclick="SaveEdit">
-              Save
-            </button>
-
-            <button class="btn btn-secondary" @onclick="CancelEdit">
-              Cancel
-            </button>
-          </td>
-        }
-        else
-        {
-          <!-- Normal display -->
-          <td>@FormatCategoryName(category.Name)</td>
-
-          <td>
-            <button class="btn btn-warning me-2" @onclick="() => StartEdit(category)">
-              Edit
-            </button>
-
-            <button class="btn btn-danger" @onclick="() => DeleteCategory(category.Id)">
-              Delete
-            </button>
-          </td>
-        }
-      </tr>
-    }
-  </tbody>
-</table>
+</div>
 
 @code {
   // Holds the new category being created from the form
@@ -175,5 +204,17 @@
       return "";
 
     return char.ToUpper(name[0]) + name.Substring(1).ToLower();
+  }
+
+  private void HandleKeyUp(KeyboardEventArgs e)
+  {
+    if (e.Key == "Enter")
+    {
+      SaveEdit(); // Guarda si presiona Enter
+    }
+    else if (e.Key == "Escape")
+    {
+      CancelEdit(); // Cancela si presiona Esc
+    }
   }
 }

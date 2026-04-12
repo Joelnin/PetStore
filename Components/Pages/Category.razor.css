@@ -1,0 +1,115 @@
+.admin-container {
+    max-width: var(--max-width);
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.management-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (max-width: 850px) {
+    .management-layout { grid-template-columns: 1fr; }
+}
+
+.custom-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.02);
+    overflow: hidden;
+}
+
+.section-title {
+    color: var(--primary);
+    font-weight: 800;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.btn-add-category {
+    background-color: var(--brand-pine-teal);
+    color: white;
+    font-weight: 700;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    transition: all 0.2s;
+}
+
+.btn-add-category:hover {
+    background-color: var(--brand-emerald);
+    transform: translateY(-2px);
+}
+
+.card-header-styled {
+    background: #f8fbf9;
+    padding: 1.5rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header-styled h2 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.custom-table th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #999;
+    padding: 1rem 1.5rem;
+    border: none;
+}
+
+.category-name-cell {
+    font-weight: 600;
+    color: var(--text-dark);
+    padding: 1rem 1.5rem !important;
+}
+
+/* Edit Inline */
+.editing-row {
+    background-color: #fff9e6; 
+}
+
+.edit-input {
+    border: 2px solid var(--brand-amber-gold);
+    border-radius: 0.5rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    padding-right: 1rem;
+}
+
+.btn-edit-inline, .btn-delete-inline, .btn-save-inline, .btn-cancel-inline {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    background: transparent;
+}
+
+.btn-edit-inline { color: #666; }
+.btn-edit-inline:hover { background: #f0f0f0; color: var(--primary); }
+
+.btn-delete-inline { color: #ffbcbc; }
+.btn-delete-inline:hover { background: #fee; color: #d32f2f; }
+
+.btn-save-inline { background: var(--brand-emerald); color: white; }
+.btn-cancel-inline { background: #eee; color: #666; }
