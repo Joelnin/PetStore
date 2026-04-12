@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@using System.Security.Claims
 
 <div class="page">
     <main>
@@ -32,28 +33,35 @@
                     <AuthorizeView>
                         <Authorized>
                             @{
-                                var firstName = context.User.Identity?.Name ?? "User";
+
+                                var firstName = context.User.FindFirst(ClaimTypes.GivenName)?.Value
+
+                                                ?? context.User.Identity?.Name
+
+                                                ?? "User";
+
                             }
                             <span class="user-greeting me-2">
-                                Hello, <NavLink class="nav-link-auth" href="management"><strong>@firstName</strong></NavLink>
-                            </span>
-                            <a class="btn btn-outline-danger btn-sm" href="/logout">Log Out</a>
-                        </Authorized>
-                        <NotAuthorized>
-                            <a class="signin-link btn btn-outline-primary" href="/signin">Sign In</a>
-                        </NotAuthorized>
-                    </AuthorizeView>
-                </div>
+                                Hello, <NavLink class="nav-link-auth" href="management"><strong>@firstName</strong>
+                            </NavLink>
+                        </span>
+                        <a class="btn btn-outline-danger btn-sm" href="/logout">Log Out</a>
+                    </Authorized>
+                    <NotAuthorized>
+                        <a class="signin-link btn btn-outline-primary" href="/signin">Sign In</a>
+                    </NotAuthorized>
+                </AuthorizeView>
             </div>
-        </header>
+        </div>
+    </header>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+    <article class="content px-4">
+        @Body
+    </article>
+</main>
 
-    <footer class="site-footer">
-        <span>&copy; 2026 Pawsitive Friends</span>
-        <NavLink href="/user-guide">User Guide</NavLink>
-    </footer>
+<footer class="site-footer">
+    <span>&copy; 2026 Pawsitive Friends</span>
+    <NavLink href="/user-guide">User Guide</NavLink>
+</footer>
 </div>
