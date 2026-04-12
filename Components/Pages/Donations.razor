@@ -45,27 +45,26 @@
                 <div class="card-body p-4">
                     <h3 class="card-title fw-bold text-primary mb-4">Support Our Pets</h3>
 
-                    <EditForm Model="@donationModel" OnValidSubmit="HandleValidSubmit" FormName="DonationForm">
+                    <EditForm Model="donationModel" OnValidSubmit="HandleValidSubmit" FormName="DonationForm">
                         <DataAnnotationsValidator />
                         
                         <div class="row">
-                            <div class="col-6 mb-3">
-                                <label class="form-label fw-bold small">First Name</label>
-                                <InputText @bind-Value="donationModel!.FirstName" class="form-control form-control-lg shadow-sm" placeholder="John" />
-                            </div>
-                            <div class="col-6 mb-3">
-                                <label class="form-label fw-bold small">Last Name</label>
-                                <InputText @bind-Value="donationModel!.LastName" class="form-control form-control-lg shadow-sm" placeholder="Doe" />
+                            <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">First Name</label>
+                                    <InputText @bind-Value="donationModel!.FirstName" class="form-control" placeholder="John" />
+                                    <ValidationMessage For="@(() => donationModel.FirstName)" class="text-danger small" />
+                                </div>
+                            <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Last Name</label>
+                                    <InputText @bind-Value="donationModel!.LastName" class="form-control" placeholder="Doe" />
+                                    <ValidationMessage For="@(() => donationModel.LastName)" class="text-danger small" />
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold small">Amount (USD)</label>
-                            <div class="input-group input-group-lg">
-                                <span class="input-group-text bg-white border-end-0 text-success fw-bold">$</span>
-                                <InputNumber @bind-Value="donationModel!.Amount" class="form-control border-start-0 shadow-sm" placeholder="25.00" />
-                            </div>
-                            <ValidationMessage For="@(() => donationModel!.Amount)" class="text-danger small mt-1" />
+                            <label class="form-label fw-bold">Donation Amount ($)</label>
+                            <InputNumber @bind-Value="donationModel!.Amount" class="form-control" placeholder="10" />
+                            <ValidationMessage For="@(() => donationModel.Amount)" class="text-danger small mt-1" />
                         </div>
 
                         <div class="form-check form-switch mb-4">
@@ -92,39 +91,42 @@
     </div>
 </div>
 
-<style>
-    .video-container {
-        position: relative;
-        padding-bottom: 56.25%; 
-        height: 0;
-    }
-    .video-container iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border-radius: 1rem;
-    }
-    .text-primary { color: var(--primary) !important; }
-    .text-secondary { color: var(--secondary) !important; }
-</style>
-
 @code {
     [SupplyParameterFromForm(FormName = "DonationForm")]
     private Donation? donationModel { get; set; }
+    
     private bool isLoading = false;
+    private string? errorMessage;
 
     protected override void OnInitialized() => donationModel ??= new();
 
     private async Task HandleValidSubmit()
     {
         if (donationModel is null) return;
+        
         isLoading = true;
+        errorMessage = null;
+
         try
         {
+            donationModel.SubmittedAt = DateTime.UtcNow;
+            donationModel.Status = DonationStatus.Pending;
+
             var created = await DonationService.CreateDonationAsync(donationModel);
-            NavManager.NavigateTo($"/donate/validate?donationId={created.Id}");
+            
+            if (created != null)
+            {
+                NavManager.NavigateTo($"/donate/validate?donationId={created.Id}");
+            }
+            else
+            {
+                errorMessage = "We couldn't process your donation. Please try again later.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "A technical error occurred. Our team has been notified.";
+            Console.WriteLine($"Donation Error: {ex.Message}");
         }
         finally
         {
